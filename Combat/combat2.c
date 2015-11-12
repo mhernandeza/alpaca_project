@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define BOOL int
 #define TRUE 1
 #define FALSE 0
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-
+#define TURNTIME 1000
 int tick (void);
 int shoot (int pcharge);
-int winner (int playerhull, int  enemyhull);
+int winner (int playerhull, int  enemyhull, int enemycannon);
 int reload (int cannons, int pcharge, char* player);
 int retreat_test (int retreat, int Hull);
 int Rules (void);
@@ -18,31 +20,41 @@ BOOL loadmedia (SDL_Surface **image);
 BOOL init (SDL_Window **window, SDL_Surface **image);
 void clear (void);
 int damage (int charge, int health);
+int Loot_drop (int enemyhull);
+int HitMiss (void);
+int critical (void);
+
+
 
 struct player {
   int Hull;
   int cannons;
+  int WeaponDamage;
   char* descriptor;
   char* name;
+  int Speed;
+  int Loot;
 };
 
 int main (void)
 {
+
   SDL_Surface *windowsurface;
   SDL_Surface *image;
   SDL_Window *window = NULL;
   /*All of this needs to be included in the main database struct*/
   struct player player1; struct player player2;
-  player1.Hull = 100; player1.cannons = 40; player1.descriptor = "Your";
-  player2.Hull = 80; player2.cannons = 25 ; player2.descriptor = "Enemy";
+  player1.Hull = 100; player1.cannons = 20; player1.descriptor = "Your"; player1.Loot = 0, player1.WeaponDamage = 1;
+  player2.Hull = 80; player2.cannons = 15; player2.descriptor = "Enemy", player2.WeaponDamage = 1;
   int retreat = 0, retreat_counter = 0;
   /*the following stats need to be passed from the player struct and
   enemy databas*/
-  int pcharge = 0, echarge = 0;
+  int pcharge = 0, echarge = 0, i, j;
   BOOL isRunning = TRUE;
   SDL_Event ev;
   init(&window, &windowsurface);
   loadmedia(&image);
+  srand(time(NULL));
   while (isRunning){
     while (SDL_PollEvent(&ev) != 0){
       if (ev.type == SDL_QUIT){
@@ -53,7 +65,7 @@ int main (void)
     SDL_UpdateWindowSurface(window);
     retreat = Rules();
     while ((player1.Hull > 0 && player2.Hull > 0 && retreat_counter < 3) ) {
-      printf("Engaging in Combat press 1 and Enter to continue\n\n");
+      printf("\nEngaged in Combat\n");
       if (tick() == 1){
         if (retreat_test(retreat, player1.Hull) == 1){
           retreat_counter++;
@@ -66,28 +78,38 @@ int main (void)
         }
         else {
           if (shoot(pcharge) == 1){
-            player2.Hull = damage(player1.cannons, player2.Hull);
             pcharge -= 100;
-            printf("enemy ship takes %d Damage\n", player1.cannons);
-            printf("Currently at %d Hull strength\n", player2.Hull);
+            for (i = 0 ; i < player1.cannons ; i++ ){
+              if (HitMiss()){
+                player2.Hull = damage(player1.WeaponDamage, player2.Hull);
+                printf("Enemy ship takes %d Damage\n", player1.cannons);
+                printf("Enemy ship currently at %d hull strength\n", player2.Hull);
+              }
+            }
           }
           if (shoot(echarge) == 1){
-            player1.Hull = damage(player2.cannons, player1.Hull);
             echarge -= 100;
-            printf("Your ship takes %d Damage\n", player2.cannons);
-            printf("Currently at %d Hull strength\n", player1.Hull);
+            for (j = 0 ; j < player2.cannons ; j++){
+              if (HitMiss()){
+                player1.Hull = damage(player2.WeaponDamage, player1.Hull);
+                printf("Your ship takes %d Damage\n", player2.cannons);
+                printf("Your ship currently at %d Hull strength\n", player1.Hull);
+              }
+            }
           }
         }
       }
     }
     if (player2.Hull <= 0 || player1.Hull <= 0) {
-      winner(player1.Hull, player2.Hull);
+      player1.Loot = player1.Loot + winner(player1.Hull, player2.Hull, player2.cannons);
+      printf("You have %d Gold coins\n", player1.Loot);
+      return 0;
     }
     if (retreat_counter == 3){
       retreat_condiition();
+      return 0;
     }
   }
-
   SDL_Quit();
   return 0;
 }
@@ -95,9 +117,19 @@ int main (void)
 int shoot (int pcharge)
 {
   if (pcharge >= 100){
+    int x;
     printf("Ready to Fire!\n");
     pcharge -= 100;
-    printf("BANG!\n");
+    x = rand() % 3;
+    if (x == 0 ){
+      printf("\n               BANG!\n\n");
+    }
+    if (x == 1) {
+      printf("\n               WOOSH!\n\n");
+    }
+    if (x == 2) {
+      printf("                 KERPOW!\n\n");
+    }
     return 1;
   }
   return 0;
@@ -105,12 +137,7 @@ int shoot (int pcharge)
 
 int tick (void)
 {
-  int i;
-  scanf("%d", &i);
-  if ( i == 1){
-    clear();
-    return 1;
-  }
+  SDL_Delay(TURNTIME);
   return 1;
 }
 
@@ -121,10 +148,11 @@ int reload (int cannons, int pcharge, char* player)
   return pcharge;
 }
 
-int winner (int playerhull, int  enemyhull)
+int winner (int playerhull, int  enemyhull, int enemycannon)
 {
   if (playerhull > enemyhull) {
     printf("You sunk the enemy Ship!!\nCollect your spoils\n");
+    return Loot_drop(enemycannon);
   }
   else {
     printf("Your ship has been sunk\n Captain goes down with the ship\n");
@@ -190,4 +218,44 @@ int damage (int cannon, int health)
 {
   health -= cannon;
   return health;
+}
+
+int Loot_drop (int enemycannon)
+{
+  return rand()%enemycannon;
+}
+
+int HitMiss (void)
+{
+  int x;
+  x = rand()%6;
+  if (x > 1 && x < 5) {
+    printf("Hit %d", x);
+    return 1;
+  }
+  if (x == 5) {
+    printf("\nIts Super Effective!\n");
+    return critical();
+  }
+  else {
+    printf("Miss %d", x);
+    return 0;
+  }
+  return 0;
+}
+
+int critical (void)
+{
+  int x;
+  x = rand()%3;
+  if (x == 0) {
+    return 2;
+  }
+  if (x == 1) {
+    return 3;
+  }
+  if (x == 2 ) {
+    return 3;
+  }
+  return 0;
 }
