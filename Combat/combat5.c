@@ -8,7 +8,7 @@
 #define FALSE 0
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-#define TURNTIME 1000
+#define TURNTIME 10
 int tick (void);
 int shoot (int pcharge);
 int winner (int playerhull, int  enemyhull, int enemycannon);
@@ -34,6 +34,7 @@ struct player {
   char* name;
   int Speed;
   int Loot;
+  int fire;
 };
 
 int main (void)
@@ -49,7 +50,7 @@ int main (void)
   int retreat = 0, retreat_counter = 0;
   /*the following stats need to be passed from the player struct and
   enemy databas*/
-  int pcharge = 0, echarge = 0, i, j;
+  int pcharge = 0, echarge = 0, i, j, playerfire = 0, enemyfire = 0;
   BOOL isRunning = TRUE;
   SDL_Event ev;
   init(&window, &windowsurface);
@@ -67,6 +68,18 @@ int main (void)
     while ((player1.Hull > 0 && player2.Hull > 0 && retreat_counter < 3) ) {
       printf("\nEngaged in Combat\n");
       if (tick() == 1){
+        if (playerfire > 0) {
+          player1.Hull -= 1;
+          if (rand()%6 == 5) {
+            playerfire -= 1;
+          }
+        }
+        if (enemyfire > 0) {
+          player2.Hull -= 1;
+          if (rand()%6 == 5) {
+            playerfire -= 1;
+          }
+        }
         if (retreat_test(retreat, player1.Hull) == 1){
           retreat_counter++;
           printf("%d turns till escape\n", 3 - retreat_counter);
@@ -85,6 +98,13 @@ int main (void)
                 printf("Enemy ship takes %d Damage\n", player1.cannons);
                 printf("Enemy ship currently at %d hull strength\n", player2.Hull);
               }
+              if (HitMiss() == 2) {
+                playerfire += 1;
+                printf("\nYour ship is on fire!!\n");
+              }
+              if (HitMiss() == 3) {
+                player2.cannons -= 1;
+              }
             }
           }
           if (shoot(echarge) == 1){
@@ -95,6 +115,13 @@ int main (void)
                 printf("Your ship takes %d Damage\n", player2.cannons);
                 printf("Your ship currently at %d Hull strength\n", player1.Hull);
               }
+            }
+            if (HitMiss() == 2) {
+              enemyfire += 1;
+              printf("\nEnemy Ship on Fire!!\n");
+            }
+            if (HitMiss() == 3) {
+              player1.cannons -= 1;
             }
           }
         }
