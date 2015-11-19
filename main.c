@@ -1,7 +1,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <stdio.h>
-#include "display.h"
+#include "event_handler.h"
+
 
 
 
@@ -11,20 +12,18 @@ int main(int argc, const char * argv[]) {
     AL_initWindowAndRenderer(&mainWindow, &mainRenderer);
     AL_initImage();
     
-    
-    AL_Sprite lightning;
-    lightning.image = AL_loadTexture("images/storm.png", mainRenderer);
-    AL_setSpriteSheetData(&lightning, 150, 13, 1);
-    AL_setSpriteSizeAndLocation(&lightning, 0, 0, lightning.frameWidth, lightning.frameHeight);
-    
-    for (bool isRunning = true; isRunning; isRunning = checkForQuit()){
+    GameState StateOfGame = MAIN_MENU;
+    SDL_Event event;
+    AL_LoadMainMenuState(mainRenderer, &StateOfGame, event);
+
+    for (bool isRunning = true; isRunning; isRunning = AL_checkForQuit(event)){
         
-        AL_getNextFrame(&lightning);
+        event = AL_checkForPress(StateOfGame);
+        AL_callCorrectState(&StateOfGame, mainRenderer, event);
         
         
-        SDL_RenderClear(mainRenderer);
-        SDL_RenderCopy(mainRenderer, lightning.image, &lightning.source, &lightning.destination);
         SDL_RenderPresent(mainRenderer);
+        
 
     }
     
@@ -37,4 +36,3 @@ int main(int argc, const char * argv[]) {
     SDL_Quit();
     
 }
-

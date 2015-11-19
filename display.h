@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include "state_data.h"
 
 typedef int bool;
 #define true 1
@@ -36,7 +37,7 @@ void AL_setSpriteSheetData(AL_Sprite *spriteSheet, unsigned int frameRate, unsig
 void AL_setSpriteSizeAndLocation(AL_Sprite *spriteSheet, int xLocation, int yLocation, int width, int height);
 bool AL_initWindowAndRenderer(SDL_Window **window, SDL_Renderer **renderTarget);
 bool AL_initImage();
-bool checkForQuit();
 SDL_Texture *AL_loadTexture(char *path, SDL_Renderer *renderTarget);
-
+void AL_LoadMainMenuState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event event);
+void AL_LoadPlayGameState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event event);
 #endif /* display_h */
