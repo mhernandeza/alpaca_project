@@ -1,0 +1,31 @@
+Queen Anne's Revenge
+a frigate with black sails
+cannon
+50
+1
+100
+4
+
+Machiavellia
+a sloop with tattered sails
+cannon
+20
+1
+50
+9
+
+Flying Dutchman
+a floating train
+cannon
+100
+1
+200
+2
+
+Kraken
+a horrifying, undulating eldritch abomination
+tentacle
+8
+1000
+5000
+0
