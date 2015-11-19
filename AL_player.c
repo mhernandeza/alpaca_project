@@ -1,18 +1,5 @@
 # include "user_behaviour.h"
-
-int main (void){
-  User player1;
-  Retreat p1behaviour;
-  User *p;
-  Retreat *p1;
-  p=&player1;
-  p1=&p1behaviour;
-  srand(time(NULL));
-  AL_initializePlayer(p);
-  AL_programReaction(p1, p);/*Depends on display*/
-  AL_presentStats(p);/*Depends on display*/
-  return 0;
-}
+int AL_setupRetreathealth(int x);
 
 void AL_initializePlayer(User *player1){
   char w[WORDL];
@@ -132,4 +119,8 @@ int AL_setupRetreathealth(int x){
       printf("ERROR!!!\n");
       exit(1);
   }
+}
+
+int AL_getHealth(User *player){
+  return player->health;
 }

@@ -9,12 +9,12 @@ struct user_ship{
   char player_name[WORDL];
   char ship_name[WORDL];
   char weapontype[WORDL];
-  int weaponnumber;
-  int weapondamage;
-  int health;
+  int weaponnumber; /*Mandar*/
+  int weapondamage; /*Mandar*/
+  int health; /*Mandar*/
   int speed;
   int luck;
-  int gold;
+  int gold; /*Mandar*/
 };
 typedef struct user_ship User;
 
@@ -27,4 +27,4 @@ typedef struct retreat Retreat;
 void AL_presentStats(User *player1);
 void AL_initializePlayer(User *player1);
 void AL_programReaction(Retreat *p1, User *player1);
-int AL_setupRetreathealth(int x);
+int AL_getHealth(User *player);
