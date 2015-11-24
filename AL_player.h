@@ -6,25 +6,28 @@
 # define WORDL 20
 
 struct user_ship{
-  char player_name[WORDL];
-  char ship_name[WORDL];
-  char weapontype[WORDL];
-  int weaponnumber; /*Mandar*/
-  int weapondamage; /*Mandar*/
+  char playerName[WORDL];
+  char shipName[WORDL];
+  char weaponType[WORDL];
+  int weaponNumber; /*Mandar*/
+  int weaponDamage; /*Mandar*/
   int health; /*Mandar*/
   int speed;
   int luck;
   int gold; /*Mandar*/
+  int retreatHealt;/*Mandar*/
+  int retreatWeapons;/*Mandar*/
 };
 typedef struct user_ship User;
 
-struct retreat{
-  int retreat_health;
-  int retreat_weapons;
-};
-typedef struct retreat Retreat;
-
-void AL_presentStats(User *player1);
-void AL_initializePlayer(User *player1);
-void AL_programReaction(Retreat *p1, User *player1);
-int AL_getHealth(User *player);
+void AL_presentStats(User *player1); /*Replace by SDL*/
+void AL_initializePlayer(User *player1); /*Called by the driver*/
+void AL_programReaction(User *player1); /*Called by the driver*/
+int AL_getHealth(User *player);/*For combat*/
+int AL_getWeaponNumber(User *player);/*For combat*/
+int AL_getWeaponDamage(User *player);/*For combat*/
+int AL_getGold(User *player);/*For combat*/
+int AL_decreaseHealth(User *player);/*For combat*/
+int AL_increaseGold(User *player);/*For combat*/
+int AL_getRetreatHealth(User *player);/*For combat*/
+int AL_getRetreatWeapons(User *player);/*For combat*/
