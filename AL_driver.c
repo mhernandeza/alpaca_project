@@ -1,12 +1,11 @@
-# include "user_behaviour.h"
+# include "combat.h"
 
 int main (void){
   User player;
-  User *p;
-  p=&player;
-  AL_initializePlayer(p);
-  AL_presentStats(p);
-  p->health=AL_getHealth(p);
-  printf("%d\n",p->health);
+  Encounter test;
+  AL_initializePlayer(&player);
+  AL_presentStats(&player);
+  AL_getEncounter(&test);
+  AL_playCombat(&player, &test);
   return 0;
 }
