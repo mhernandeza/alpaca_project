@@ -1,5 +1,6 @@
 Queen Anne's Revenge
 a frigate with black sails
+she
 cannon
 50
 1
@@ -8,6 +9,7 @@ cannon
 
 Machiavellia
 a sloop with tattered sails
+she
 cannon
 20
 1
@@ -16,7 +18,8 @@ cannon
 
 Flying Dutchman
 a floating train
-cannon
+it
+railguns
 100
 1
 200
@@ -24,8 +27,27 @@ cannon
 
 Kraken
 a horrifying, undulating eldritch abomination
-tentacle
+it
+tentacles
 8
 1000
 5000
 0
+
+Siren
+a beautiful woman with an unearthly pallor
+she
+lyres
+1
+50
+200
+20
+
+Black dragon
+a dangerous-looking drake with scales as black as pitch
+it
+claws
+4
+100
+150
+10
