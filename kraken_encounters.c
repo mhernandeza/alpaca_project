@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "encounter.h"
 
 #define TOTALENCOUNTERS 4
@@ -76,17 +72,49 @@ int generate_environment(Environment* surroundings){
 
 /* this needs to take in a encounter pointer and fill it */
 void AL_getEncounter(Encounter *e){
-  int random_encounter,random_direction;
+  int choicenumber,random_encounter1,random_encounter2,random_direction1,random_direction2,chosen;
+  char c,tempstring1[INFOTEXT],tempstring2[INFOTEXT];
   Encounter* list;
   Environment* surroundings;
+  Encounter current;
   list = (Encounter*)malloc(sizeof(Encounter)*TOTALENCOUNTERS);
   surroundings = (Environment*)malloc(sizeof(Environment)*COMPASSPOINTS);
   readfile(list);
   generate_environment(surroundings);
-  random_encounter = rand()%TOTALENCOUNTERS;
-  random_direction = rand()%COMPASSPOINTS;
-  list[random_encounter].locale = surroundings[random_direction];
-  copyencounter(e,&list[random_encounter]);
+  random_encounter1 = rand()%TOTALENCOUNTERS;
+  do{
+    random_encounter2 = rand()%TOTALENCOUNTERS;
+  }while(random_encounter2 != random_encounter1);
+  random_direction1 = rand()%COMPASSPOINTS;
+  do{
+    random_direction2 = rand()%COMPASSPOINTS;
+  }while(random_direction2 != random_direction1);
+  list[random_encounter1].locale = surroundings[random_direction1];
+  list[random_encounter2].locale = surroundings[random_direction2];
+  current = list[random_encounter1];
+  for(choicenumber = 1;choicenumber<3;choicenumber++){
+    printf("\nEncounter %d: %s!\nYou see %s on the horizon to the %s; %s is armed with %d %s.\nThe weather looks %s.\n\n",
+    choicenumber,current.name,current.description,current.locale.direction,current.pronoun,current.weaponnumber,current.weapontype,current.locale.weatherdescription);
+    current = list[random_encounter2];
+  }
+  strcpy(tempstring1,list[random_encounter1].locale.direction);
+  strcpy(tempstring2,list[random_encounter2].locale.direction);
+  toupper(tempstring1[0]);
+  toupper(tempstring2[0]);
+  printf("In which direction do you choose to travel?\n1: %s\n2: %s\n\n",tempstring1,tempstring2);
+  chosen = -1;
+  do{
+    if((c = getchar()) == '1'){
+      chosen = random_encounter1;
+    }
+    else if(c == '2'){
+      chosen = random_encounter2;
+    }
+    else{
+      printf("Please enter 1 or 2:\n");
+    }
+  }while(chosen == -1);
+  copyencounter(e,&list[chosen]);
   free(list);
   free(surroundings);
 }
