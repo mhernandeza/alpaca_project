@@ -73,8 +73,7 @@ int generate_environment(Environment* surroundings){
 /* this needs to take in a encounter pointer and fill it */
 void AL_getEncounter(Encounter *e){
   int choicenumber,random_encounter1,random_encounter2,random_direction1,random_direction2,chosen;
-  char *tempstring1,*tempstring2;
-  char c;
+  char c,tempstring1[INFOTEXT],tempstring2[INFOTEXT];
   Encounter* list;
   Environment* surroundings;
   Encounter current;
