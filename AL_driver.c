@@ -1,12 +1,13 @@
-# include "user_behaviour.h"
+# include "AL_driver.h"
 
 int main (void){
   User player;
-  User *p;
-  p=&player;
-  AL_initializePlayer(p);
-  AL_presentStats(p);
-  p->health=AL_getHealth(p);
-  printf("%d\n",p->health);
+  Encounter test;
+  AL_initializePlayer(&player);
+  AL_presentStats(&player);
+  do{
+    AL_getEncounter(&test);
+    AL_playCombat(&player, &test);
+  }while(AL_getHealth(&player));
   return 0;
 }

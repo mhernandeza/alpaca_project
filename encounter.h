@@ -1,4 +1,5 @@
 #define INFOTEXT 100
+# include "AL_player.h"
 
 struct environment{
   char direction[INFOTEXT];
