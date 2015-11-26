@@ -1,6 +1,7 @@
 # include "AL_combat.h"
 
-int AL_playCombat(User *player, Encounter *player2){
+int AL_playCombat(User *player, Encounter *player2)
+{
   int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 10, playerfire = 0, enemyfire = 0;
   if (tick() == 1){
     if ((AL_getRetreatHealth(player) < AL_getHealth(player) )||
@@ -32,7 +33,7 @@ int AL_playCombat(User *player, Encounter *player2){
     return 0;
   }
   if (retreat_counter == 10){
-    retreat_condiition();
+    retreat_condition();
     return 1;
   }
   return 0;
@@ -71,7 +72,7 @@ int AL_damageHandle (int WeaponNum, int weapondamage)
     if (y <= 1) {
       miss++;
     }
-    if (y >= 3 && y<= 4) {
+    if (y >= 2 && y<= 4) {
       hits++;
     }
     if (y == 5) {
@@ -84,7 +85,7 @@ int AL_damageHandle (int WeaponNum, int weapondamage)
   return hits*weaponDamage
 }
 
-int retreat_condiition (void)
+int retreat_condition (void)
 {
   printf("you managed to escape with your life!\n");
   return 0;

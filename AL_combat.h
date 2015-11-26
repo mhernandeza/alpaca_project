@@ -3,8 +3,8 @@
 #define TRUE 1
 #define FALSE 0
 #define TURNTIME 750
-
-int retreat_condiition (void);
+int tick (void);
+int retreat_condition (void);
 int AL_damageHandle (int WeaponNum, int weapondamage);
 int AL_reloadCannons (int Weapon_Number);
 int AL_shoot_cannons (int Player_charge);
