@@ -47,6 +47,7 @@ void AL_programReaction(User *player, Encounter *test){
 
 void AL_askHealth(User *player){
   int x;
+  printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   printf("You have a hull of %d%%!\n", player->health);
   printf("Would you like to retreat based on your hull condition?\n"
          "1.Yes\n"
@@ -57,6 +58,7 @@ void AL_askHealth(User *player){
   }
   else{
     printf("Today is a good day to die Capitain!\n");
+    printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
     player->retreatHealth=-1;/*Flag for it not to be considered*/
   }
 }
@@ -66,6 +68,7 @@ int AL_setupRetreathealth(int x){
   switch (x){
     case 0:
     do{
+      printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
       printf("Flee if our health is not more than: ");
       scanf("%d", &health);
       if(health>=100){
@@ -79,11 +82,13 @@ int AL_setupRetreathealth(int x){
     else{
       printf("if(!(HEALTH>%d%%)){\n  retreat();\n}\n",health);
       printf("We'll retreat IF our health is NOT MORE THAN %d.\n",health);
+      printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
     }
     return health;
     break;
     case 1:
     do{
+      printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
       printf("Flee if our health is fewer than: ");
       scanf("%d", &health);
       if(health<0){
@@ -97,6 +102,7 @@ int AL_setupRetreathealth(int x){
     else{
       printf("if(HEALTH<%d){\n  retreat();\n}\n",health);
       printf("We'll retreat IF our health is FEWER THAN %d.\n",health);
+      printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
     }
     return health;
     break;
@@ -109,6 +115,7 @@ int AL_setupRetreathealth(int x){
 
 void AL_askWeapons(User *player){
   int x;
+  printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   printf("Your current ship is well equipped with %d cannons!\n", player->weaponNumber);
   printf("Would you like to retreat if you have fewer cannons than the opponent ship?\n"
          "1.Yes\n"
@@ -118,21 +125,25 @@ void AL_askWeapons(User *player){
     player->retreatWeapons=1;/*Flag, comparisson between number of cannons should be made*/
     printf("if(CANNONS<Enemy_Cannons){\n  retreat();\n}\n");
     printf("We will flee IF OUR CANNONS are FEWER THAN the ENEMY CANNONS.\n");
+    printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   }
   else{
     player->retreatWeapons=0;/*Flag, doesn't matter*/
     printf("We shall fear no enemy Capitain!\n");
+    printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   }
 }
 
 void AL_askKraken(User *player){
   int x;
+  printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   printf("There's no way to beat the kraken, are you sure you want to do this?\n"
          "1.Yes\n"
          "2.No\n");
   scanf("%d", &x);
   if(x==1){
     printf("Good luck!\n");
+    printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   }
   else{
     player->retreatHealth=100;
