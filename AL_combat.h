@@ -1,4 +1,6 @@
 # include "AL_player.h"
+# include <SDL2/SDL.h>
+
 #define BOOL int
 #define TRUE 1
 #define FALSE 0

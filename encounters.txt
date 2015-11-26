@@ -14,7 +14,7 @@ a sloop with tattered sails
 she
 cannon
 20
-1
+2
 50
 9
 
@@ -23,7 +23,7 @@ Flying Dutchman
 a floating train
 it
 railguns
-100
+60
 1
 200
 2

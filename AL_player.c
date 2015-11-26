@@ -36,11 +36,11 @@ void AL_programReaction(User *player, Encounter *test){
       AL_askHealth(player);
       /*AL_askWeapons(player);*/
       break;
-    case 4:
+    case 3:
       AL_askKraken(player);
       break;
     default:
-      printf("ERROR!!!\n");
+      printf("Wrong encounter ID!!!\n");
       break;
   }
 }
@@ -108,7 +108,7 @@ int AL_setupRetreathealth(int x){
     break;
     default:
       health=0;
-      printf("ERROR!!!\n");
+      printf("Health is 0 error!!!\n");
       exit(1);
   }
 }

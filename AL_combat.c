@@ -2,20 +2,20 @@
 
 int AL_playCombat(User *player, Encounter *player2)
 {
-  int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 10;
-  if (tick() == 1){
-    if ((AL_getRetreatHealth(player) < AL_getHealth(player) )||
-    ((AL_getRetreatWeapons(player) == 1) /* &&
-  (AL_getEnemyRetreatWeapon(player2) > AL_getWeaponNumber(player))*/)) {
+  int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0;
+  do {
+    if (tick() == 1){
+      if ((AL_getRetreatHealth(player) > AL_getHealth(player) )/*||
+      ((AL_getRetreatWeapons(player) == 1)  &&
+      (AL_getEnemyRetreatWeapon(player2) > AL_getWeaponNumber(player)))*/) {
       retreat_Counter++;
-      printf("%d turns till escape\n", 10 - retreat_Counter);
+      printf("%d turns till escape\n", 3 - retreat_Counter);
     }
     Player_charge += AL_getWeaponNumber(player);
     Enemy_charge += player2->weaponnumber;
-    if (retreat_Counter >= 0) {
+    if (retreat_Counter > 0) {
       printf("Retreating!\n");
     }
-    else {
       if (AL_shoot_cannons(Player_charge) == 1){
         Player_charge -= 100;
         player2->health -= AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player));
@@ -24,19 +24,23 @@ int AL_playCombat(User *player, Encounter *player2)
         AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage));
         Enemy_charge -= 100;
       }
+    if (player2->health <= 0){
+      printf("You sank the Enemy ship\n");
+      return 1;
+    }
+    if(AL_getHealth(player) <= 0){
+      printf("Your ship was sunk by the enemy ship\n");
+
+      return 0;
+    }
+    if (retreat_Counter==3){
+      retreat_condition();
+      return 1;
     }
   }
-  if (player2->health <= 0){
-    return 1;
-  }
-  if(AL_getHealth(player) <= 0){
-    return 0;
-  }
-  if (retreat_Counter == 10){
-    retreat_condition();
-    return 1;
-  }
-  return 0;
+}
+while (AL_getHealth(player) >= 0 );
+return 0;
 }
 
 int AL_shoot_cannons (int Player_charge)
@@ -71,7 +75,7 @@ int AL_damageHandle (int WeaponNum, int weapondamage)
       hits++;
     }
     if (y == 5) {
-      hits+=2;
+      hits++;
       critical++;
     }
   }
@@ -87,8 +91,6 @@ int retreat_condition (void)
 
 int tick (void)
 {
-  if (time(NULL)%TURNTIME == 0){
-    return 1;
-  }
-  return 0;
+  SDL_Delay(TURNTIME);
+  return 1;
 }
