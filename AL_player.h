@@ -18,11 +18,11 @@ typedef struct user_ship User;
 
 void AL_presentStats(User *player); /*Replace by SDL*/
 void AL_initializePlayer(User *player); /*Called by the driver*/
-void AL_programReaction(User *player); /*Called by the driver*/
-void AL_askHealth(void);/*Local*/
+void AL_programReaction(User *player, Encounter *test);/*Called by the driver*/
+void AL_askHealth(User *player);/*Local*/
 int AL_setupRetreathealth(int x);/*Local*/
-void AL_askWeapons(void);/*Local*/
-void AL_askKraken(void);/*Local*/
+void AL_askWeapons(User *player);/*Local*/
+void AL_askKraken(User *player);/*Local*/
 
 /*For combat*/
 int AL_getHealth(User *player);
