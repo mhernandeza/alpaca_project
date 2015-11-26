@@ -3,11 +3,12 @@
 int main (void){
   User player;
   Encounter test;
-  int result;
+  int result, cnt;
   srand(time(NULL));
   AL_initializePlayer(&player);
   AL_presentStats(&player);
-  /*do{*/
+  cnt=0;
+  do{
     do{
       AL_getEncounter(&test);
       AL_programReaction(&player, &test);
@@ -23,7 +24,8 @@ int main (void){
       printf("Oh no!\n");
       printf("\n");
     }
-  /*}while(AL_getHealth(&player));*/
+    cnt++;
+  }while(cnt<2/*AL_getHealth(&player)*/);
   printf("Game over!\n");
   return 0;
 }

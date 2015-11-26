@@ -34,7 +34,7 @@ void AL_programReaction(User *player, Encounter *test){
     case 1:
     case 2:
       AL_askHealth(player);
-      AL_askWeapons(player);
+      /*AL_askWeapons(player);*/
       break;
     case 4:
       AL_askKraken(player);
@@ -117,7 +117,7 @@ void AL_askWeapons(User *player){
   int x;
   printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   printf("Your current ship is well equipped with %d cannons!\n", player->weaponNumber);
-  printf("Would you like to retreat if you have fewer cannons than the opponent ship?\n"
+  printf("Would you like to retreat based on your opponent ship cannons?\n"
          "1.Yes\n"
          "2.No\n");
   scanf("%d", &x);
