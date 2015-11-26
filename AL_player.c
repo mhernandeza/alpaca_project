@@ -109,7 +109,7 @@ int AL_setupRetreathealth(int x){
 
 void AL_askWeapons(User *player){
   int x;
-  printf("Your current ship is well equipped with %d cannons!\n", player->weaponnumber);
+  printf("Your current ship is well equipped with %d cannons!\n", player->weaponNumber);
   printf("Would you like to retreat if you have fewer cannons than the opponent ship?\n"
          "1.Yes\n"
          "2.No\n");
