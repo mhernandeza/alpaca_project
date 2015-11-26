@@ -22,4 +22,4 @@ struct encounter{
 
 typedef struct encounter Encounter;
 
-Encounter* AL_getEncounter(Encounter *e);
+void AL_getEncounter(Encounter *e);

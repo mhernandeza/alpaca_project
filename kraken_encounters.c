@@ -10,14 +10,15 @@
 int readfile(Encounter* list);
 void read_in_string(char s[],FILE *fp);
 int generate_environment(Environment* surroundings);
+void copyencounter(Encounter* remote, Encounter* local);
 
-int main(void){
-  Encounter* test = NULL;
+int main2 (void){
+/*  Encounter* test = NULL;*/
   srand(time(NULL));
-  test = AL_getEncounter(test);
+/*  AL_getEncounter(test);
   printf("\nEncounter: %s!\nYou see %s on the horizon to the %s; %s is armed with %d %s.\nThe weather looks %s.\n\n",
   test->name,test->description,test->locale.direction,test->pronoun,test->weaponnumber,test->weapontype,test->locale.weatherdescription);
-  free(test);
+  free(test); */
   return 0;
 }
 
@@ -83,11 +84,10 @@ int generate_environment(Environment* surroundings){
 /* Below: Create small functions to send information from the struct to other modules, etc */
 
 /* this needs to take in a encounter pointer and fill it */
-Encounter* AL_getEncounter(Encounter *e){
+void AL_getEncounter(Encounter *e){
   int random_encounter,random_direction;
   Encounter* list;
   Environment* surroundings;
-  e = (Encounter*)malloc(sizeof(Encounter));
   list = (Encounter*)malloc(sizeof(Encounter)*TOTALENCOUNTERS);
   surroundings = (Environment*)malloc(sizeof(Environment)*COMPASSPOINTS);
   readfile(list);
@@ -95,8 +95,21 @@ Encounter* AL_getEncounter(Encounter *e){
   random_encounter = rand()%TOTALENCOUNTERS;
   random_direction = rand()%COMPASSPOINTS;
   list[random_encounter].locale = surroundings[random_direction];
-  *e = list[random_encounter];
+  copyencounter(e,&list[random_encounter]);
   free(list);
   free(surroundings);
-  return e;
+}
+
+void copyencounter(Encounter* remote, Encounter* local){
+  strcpy(remote->name,local->name);
+  strcpy(remote->description,local->description);
+  strcpy(remote->pronoun,local->pronoun);
+  strcpy(remote->weapontype,local->weapontype);
+  remote->weaponnumber = local->weaponnumber;
+  remote->weapondamage = local->weapondamage;
+  remote->health = local->health;
+  remote->speed = local->speed;
+  strcpy(remote->locale.direction,local->locale.direction);
+  strcpy(remote->locale.weatherdescription,local->locale.weatherdescription);
+  remote->locale.weatherseverity = local->locale.weatherseverity;
 }
