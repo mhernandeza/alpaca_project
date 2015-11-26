@@ -112,7 +112,7 @@ void AL_getEncounter(Encounter *e){
       chosen = random_encounter2;
     }
     else{
-      printf"Please enter 1 or 2:\n");
+      printf("Please enter 1 or 2:\n");
     }
   }while(chosen == -1);
   copyencounter(e,&list[chosen]);
