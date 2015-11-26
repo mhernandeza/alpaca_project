@@ -4,23 +4,13 @@
 #include <time.h>
 #include "encounter.h"
 
-#define TOTALENCOUNTERS 6
+#define TOTALENCOUNTERS 4
 #define COMPASSPOINTS 8
 
 int readfile(Encounter* list);
 void read_in_string(char s[],FILE *fp);
 int generate_environment(Environment* surroundings);
 void copyencounter(Encounter* remote, Encounter* local);
-
-int main2 (void){
-/*  Encounter* test = NULL;*/
-  srand(time(NULL));
-/*  AL_getEncounter(test);
-  printf("\nEncounter: %s!\nYou see %s on the horizon to the %s; %s is armed with %d %s.\nThe weather looks %s.\n\n",
-  test->name,test->description,test->locale.direction,test->pronoun,test->weaponnumber,test->weapontype,test->locale.weatherdescription);
-  free(test); */
-  return 0;
-}
 
 int readfile(Encounter* list){
   int i;
@@ -31,6 +21,7 @@ int readfile(Encounter* list){
     exit(1);
   }
   for(i=0;i<TOTALENCOUNTERS;i++){
+    fscanf(fp,"%d\n",&list[i].ID);
     read_in_string(list[i].name,fp);
     read_in_string(list[i].description,fp);
     read_in_string(list[i].pronoun,fp);
@@ -101,6 +92,7 @@ void AL_getEncounter(Encounter *e){
 }
 
 void copyencounter(Encounter* remote, Encounter* local){
+  remote->ID = local->ID;
   strcpy(remote->name,local->name);
   strcpy(remote->description,local->description);
   strcpy(remote->pronoun,local->pronoun);

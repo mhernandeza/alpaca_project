@@ -1,5 +1,9 @@
+# include <stdio.h>
+# include <stdlib.h>
+# include <math.h>
+# include <string.h>
+# include <time.h>
 #define INFOTEXT 100
-# include "AL_player.h"
 
 struct environment{
   char direction[INFOTEXT];
@@ -10,6 +14,7 @@ struct environment{
 typedef struct environment Environment;
 
 struct encounter{
+  int ID;
   char name[INFOTEXT]; /* eg: Queen Anne's Revenge */
   char description[INFOTEXT]; /* eg: a frigate with black sails */
   char pronoun[INFOTEXT]; /* eg: it, she, he, they */

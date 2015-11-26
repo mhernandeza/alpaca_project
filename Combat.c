@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <stdlib.h>
@@ -6,6 +7,9 @@
 #include <time.h>
 
 
+=======
+# include "AL_player.h"
+>>>>>>> f76bed96b2223803674d1c4c4d6bb0542bffee80
 #define BOOL int
 #define TRUE 1
 #define FALSE 0
@@ -15,6 +19,7 @@ int retreat_condiition (void);
 int AL_damageHandle (int WeaponNum, int weapondamage);
 int AL_reloadCannons (int Weapon_Number);
 int AL_shoot_cannons (int Player_charge);
+<<<<<<< HEAD
 int tick (void);
 
 struct user_fake {
@@ -37,6 +42,11 @@ int main (void)
   AL_getEncounter(&test); /* move this to game controller module then pass yourself a pointer to the struct */
   printf("\nEncounter: %s!\nYou see %s on the horizon to the %s; %s is armed with %d %s.\nThe weather looks %s.\n\n",
   test.name,test.description,test.locale.direction,test.pronoun,test.weaponnumber,test.weapontype,test.locale.weatherdescription);
+=======
+int AL_playCombat(User *player, Encounter *player2);
+
+int AL_playCombat(User *player, Encounter *player2){
+>>>>>>> f76bed96b2223803674d1c4c4d6bb0542bffee80
   int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 10, playerfire = 0, enemyfire = 0;
   if (tick() == 1){
     if ((AL_getRetreatHealth(player1) < AL_getHealth(player1) )||
@@ -45,6 +55,7 @@ int main (void)
       retreat_Counter++;
       printf("%d turns till escape\n", 10 - retreat_Counter);
     }
+<<<<<<< HEAD
     Player_charge += AL_reloadCannons(AL_getWeaponNumber(player1));
     Enemy_charge += AL_reloadCannons(player2.weaponnumber);
     if (retreat_Counter >= 0) {
@@ -53,6 +64,22 @@ int main (void)
     if (AL_shoot_cannons(Player_charge) == 1){
       Player_charge -= 100;
       player2.health -= AL_damageHandle(AL_getWeaponNumber(player1), AL_getWeaponDamage(player1));
+=======
+    Player_charge += AL_reloadCannons(AL_getWeaponNumber(player));
+    Enemy_charge += AL_reloadCannons(player2->weaponnumber);
+    if (retreat_counter >= 0) {
+      printf("Retreating!\n");
+    }
+    else {
+      if (AL_shoot_cannons(Player_charge) == 1){
+        Player_charge -= 100;
+        player2->health -= AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player));
+      }
+      if (AL_shoot_cannons(Enemy_charge) == 1){
+        AL_decreaseHealth(damageHandle(player2->weaponnumber, player2->weapondamage));
+        Enemy_charge -= 100;
+      }
+>>>>>>> f76bed96b2223803674d1c4c4d6bb0542bffee80
     }
     if (AL_shoot_cannons(Enemy_charge) == 1){
       AL_decreaseHealth(damageHandle(player2.weaponnumber, player2.weapondamage));
@@ -61,7 +88,11 @@ int main (void)
   if (player2.Hull <= 0) {
     return 1;
   }
+<<<<<<< HEAD
   if (AL_getHealth(player1) <= 0) {
+=======
+  if (player2->Hull <= 0 || AL_getHealth(player) <= 0) {
+>>>>>>> f76bed96b2223803674d1c4c4d6bb0542bffee80
     return 0;
   }
   if (retreat_Counter == 10){
