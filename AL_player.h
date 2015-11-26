@@ -1,8 +1,4 @@
-# include <stdio.h>
-# include <stdlib.h>
-# include <math.h>
-# include <string.h>
-# include <time.h>
+# include "encounter.h"
 # define WORDL 20
 
 struct user_ship{
@@ -23,6 +19,10 @@ typedef struct user_ship User;
 void AL_presentStats(User *player); /*Replace by SDL*/
 void AL_initializePlayer(User *player); /*Called by the driver*/
 void AL_programReaction(User *player); /*Called by the driver*/
+void AL_askHealth(void);/*Local*/
+int AL_setupRetreathealth(int x);/*Local*/
+void AL_askWeapons(void);/*Local*/
+void AL_askKraken(void);/*Local*/
 
 /*For combat*/
 int AL_getHealth(User *player);

@@ -1,14 +1,4 @@
-# include "AL_player.h"
-#define BOOL int
-#define TRUE 1
-#define FALSE 0
-#define TURNTIME 750
-
-int retreat_condiition (void);
-int AL_damageHandle (int WeaponNum, int weapondamage);
-int AL_reloadCannons (int Weapon_Number);
-int AL_shoot_cannons (int Player_charge);
-int AL_playCombat(User *player, Encounter *player2);
+# include "AL_combat.h"
 
 int AL_playCombat(User *player, Encounter *player2){
   int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 10, playerfire = 0, enemyfire = 0;
@@ -35,12 +25,15 @@ int AL_playCombat(User *player, Encounter *player2){
       }
     }
   }
-  if (player2->Hull <= 0 || AL_getHealth(player) <= 0) {
+  if (player2->Hull <= 0){
+    return 1;
+  }
+  if(AL_getHealth(player) <= 0){
     return 0;
   }
   if (retreat_counter == 10){
     retreat_condiition();
-    return 0;
+    return 1;
   }
   return 0;
 }
