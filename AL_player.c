@@ -3,8 +3,8 @@
 void AL_presentStats(User *player){
   printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
   printf("Welcome Capitain %s on board the %s, armed with %d %s.\n",
-        player->player_name, player->ship_name, player->weaponnumber,
-        player->weapontype);
+        player->playerName, player->shipName, player->weaponNumber,
+        player->weaponType);
   if(player->luck>5){
     printf("We're feeling lucky.\n");
   }
