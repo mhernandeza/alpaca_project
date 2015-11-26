@@ -10,6 +10,7 @@ struct environment{
 typedef struct environment Environment;
 
 struct encounter{
+  int ID;
   char name[INFOTEXT]; /* eg: Queen Anne's Revenge */
   char description[INFOTEXT]; /* eg: a frigate with black sails */
   char pronoun[INFOTEXT]; /* eg: it, she, he, they */
