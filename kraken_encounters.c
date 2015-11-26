@@ -84,11 +84,11 @@ void AL_getEncounter(Encounter *e){
   random_encounter1 = rand()%TOTALENCOUNTERS;
   do{
     random_encounter2 = rand()%TOTALENCOUNTERS;
-  }while(random_encounter2 != random_encounter1);
+  }while(random_encounter2 == random_encounter1);
   random_direction1 = rand()%COMPASSPOINTS;
   do{
     random_direction2 = rand()%COMPASSPOINTS;
-  }while(random_direction2 != random_direction1);
+  }while(random_direction2 == random_direction1);
   list[random_encounter1].locale = surroundings[random_direction1];
   list[random_encounter2].locale = surroundings[random_direction2];
   current = list[random_encounter1];
