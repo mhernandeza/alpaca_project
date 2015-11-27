@@ -179,6 +179,21 @@ int AL_decreaseHealth(User *player, int amount){
   return player->health;
 }
 
+int AL_decreaseWeapons(User *player, int amount){
+/*Modifies the user's number of weapons by a fixed amount, returns the resulting number*/
+  player->weaponNumber-=amount;
+  if(player->weaponNumber<10){
+    player->weaponNumber=10;
+  }
+  return player->weaponNumber;
+}
+
+int AL_increaseWeapons(User *player, int amount){
+  /*Modifies the user's number of weapons by a fixed amount, returns the resulting number*/
+  player->weaponNumber+=amount;
+  return player->weaponNumber;
+}
+
 int AL_increaseGold(User *player, int amount){
 /*Modifies the user's current gold by a fixed amount, returns the resulting gold*/
   player->gold+=amount;

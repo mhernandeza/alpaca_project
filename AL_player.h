@@ -35,6 +35,10 @@ int AL_getGold(User *player);
 /*Returns the user's current gold*/
 int AL_decreaseHealth(User *player, int amount);
 /*Modifies the user's current health by a fixed amount, returns the resulting health*/
+int AL_decreaseWeapons(User *player, int amount);
+/*Modifies the user's number of weapons by a fixed amount, returns the resulting number*/
+int AL_increaseWeapons(User *player, int amount);
+/*Modifies the user's number of weapons by a fixed amount, returns the resulting number*/ 
 int AL_increaseGold(User *player, int amount);
 /*Modifies the user's current gold by a fixed amount, returns the resulting gold*/
 int AL_getRetreatHealth(User *player);
