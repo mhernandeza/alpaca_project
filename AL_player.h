@@ -20,7 +20,7 @@ void AL_presentStats(User *player); /*Replace by SDL*/
 void AL_initializePlayer(User *player); /*Called by the driver*/
 void AL_programReaction(User *player, Encounter *test);/*Called by the driver*/
 void AL_askHealth(User *player);/*Local*/
-int AL_setupRetreathealth(int x);/*Local*/
+int AL_setupRetreathealth(int x, int h);/*Local*/
 void AL_askWeapons(User *player);/*Local*/
 void AL_askKraken(User *player);/*Local*/
 
@@ -41,3 +41,5 @@ int AL_getRetreatHealth(User *player);
 /*Returns retreat health programmed by the user*/
 int AL_getRetreatWeapons(User *player);
 /*Returns 1 if the user decided to retreat when having less cannons than the enemy*/
+int AL_getSpeed(User *player);
+/*Returns players reloading speed*/

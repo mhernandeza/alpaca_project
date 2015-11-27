@@ -54,7 +54,7 @@ void AL_askHealth(User *player){
          "2.No\n");
   scanf("%d", &x);
   if(x==1){
-    player->retreatHealth=AL_setupRetreathealth(rand()%2);
+    player->retreatHealth=AL_setupRetreathealth(rand()%2, player->health);
   }
   else{
     printf("Today is a good day to die Capitain!\n");
@@ -63,7 +63,7 @@ void AL_askHealth(User *player){
   }
 }
 
-int AL_setupRetreathealth(int x){
+int AL_setupRetreathealth(int x, int h){
   int health;
   switch (x){
     case 0:
@@ -71,10 +71,10 @@ int AL_setupRetreathealth(int x){
       printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
       printf("Flee if our health is not more than: ");
       scanf("%d", &health);
-      if(health>=100){
-        printf("Your maximum health is 100, try again.\n");
+      if(health>=h){
+        printf("Your maximum health is %d, try again.\n",h);
       }
-    }while(health>=100);
+    }while(health>=h);
     if(health==0){
       printf("We shall not back down Capitain!\n");
       health=-1;/*Flag condition for never retreating*/
@@ -191,4 +191,9 @@ int AL_getRetreatHealth(User *player){
 int AL_getRetreatWeapons(User *player){
 /*Returns 1 if the user decided to retreat when having less cannons than the enemy, returns 0 otherwise*/
   return player->retreatWeapons;
+}
+
+int AL_getSpeed(User *player){
+/*Returns players reloading speed*/
+  return player->speed;
 }
