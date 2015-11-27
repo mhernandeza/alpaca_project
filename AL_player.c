@@ -179,6 +179,15 @@ int AL_decreaseHealth(User *player, int amount){
   return player->health;
 }
 
+int AL_increaseHealth(User *player, int amount){
+/*Modifies the user's current health by a fixed amount, returns the resulting health*/
+  player->health+=amount;
+  if(player->health>100){
+    player->health=100;
+  }
+  return player->health;
+}
+
 int AL_decreaseWeapons(User *player, int amount){
 /*Modifies the user's number of weapons by a fixed amount, returns the resulting number*/
   player->weaponNumber-=amount;
