@@ -23,7 +23,7 @@ void AL_initializePlayer(User *player){
   player->weaponNumber=(rand()%30)+20;
   player->weaponDamage=1;
   player->health=100;
-  player->speed=1+(rand()%10);
+  player->speed=5;
   player->luck=1+(rand()%10);
   player->gold=1000;
 }
