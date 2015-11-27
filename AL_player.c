@@ -37,6 +37,7 @@ void AL_programReaction(User *player, Encounter *test){
       /*AL_askWeapons(player);*/
       break;
     case 3:
+      AL_askHealth(player);
       AL_askKraken(player);
       break;
     default:
