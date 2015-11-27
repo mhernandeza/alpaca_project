@@ -26,6 +26,7 @@ void AL_initializePlayer(User *player){
   player->speed=5;
   player->luck=1+(rand()%10);
   player->gold=1000;
+  player->creew=(rand()%20)+40;/*From 40 to 60*/
 }
 
 void AL_programReaction(User *player, Encounter *test){
@@ -221,4 +222,27 @@ int AL_getRetreatWeapons(User *player){
 int AL_getSpeed(User *player){
 /*Returns players reloading speed*/
   return player->speed;
+}
+
+int AL_getCrew(User *player){
+/*Returns players crew number*/
+  return player->crew;
+}
+
+int AL_increaseCrew(User *player, int amount){
+/*Modifies crew number by an amount and returns the result*/
+  player->crew+=amount;
+  if(player->crew>100){
+    player->crew=100;
+  }
+  return player->crew;
+}
+
+int AL_decreaseCrew(User *player, int amount){
+/*Modifies crew number by an amount and returns the result*/
+  player->crew-=amount;
+  if(player->crew<1){
+    player->crew=1;
+  }
+  return player->crew;
 }

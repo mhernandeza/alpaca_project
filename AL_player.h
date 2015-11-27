@@ -11,6 +11,7 @@ struct user_ship{
   int speed;/*From 1 to 10*/
   int luck;/*From 1 to 10*/
   int gold;/*Starting with 1000*/
+  int crew;/*From 1 to 100*/
   int retreatHealth;
   int retreatWeapons;
 };
@@ -49,3 +50,9 @@ int AL_getRetreatWeapons(User *player);
 /*Returns 1 if the user decided to retreat when having less cannons than the enemy*/
 int AL_getSpeed(User *player);
 /*Returns players reloading speed*/
+int AL_getCrew(User *player);
+/*Returns players crew number*/
+int AL_increaseCrew(User *player, int amount);
+/*Modifies crew number by an amount and returns the result*/
+int AL_decreaseCrew(User *player, int amount);
+/*Modifies crew number by an amount and returns the result*/
