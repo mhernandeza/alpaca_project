@@ -2,7 +2,7 @@
 
 int AL_playCombat(User *player, Encounter *player2)
 {
-  int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0;
+  int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, damage = 0;
   do {
     if (tick() == 1){
       if ((AL_getRetreatHealth(player) > AL_getHealth(player) )/*||
@@ -11,18 +11,19 @@ int AL_playCombat(User *player, Encounter *player2)
       retreat_Counter++;
       printf("%d turns till escape\n", 3 - retreat_Counter);
     }
-    Player_charge += AL_getWeaponNumber(player);
-    Enemy_charge += player2->weaponnumber;
+    Player_charge += AL_getspeed(player);
+    Enemy_charge += player2->speed;
     if (retreat_Counter > 0) {
       printf("Retreating!\n");
     }
       if (AL_shoot_cannons(Player_charge) == 1){
-        Player_charge -= 100;
-        player2->health -= AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player));
+        Player_charge -= 20;
+        damage = AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player));
+        player2->health -= damage;
       }
       if (AL_shoot_cannons(Enemy_charge) == 1){
+        Enemy_charge -= 20;
         AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage));
-        Enemy_charge -= 100;
       }
     if (player2->health <= 0){
       printf("You sank the Enemy ship\n");
@@ -46,7 +47,7 @@ return 0;
 int AL_shoot_cannons (int Player_charge)
 {
   int x;
-  if (Player_charge >= 100){
+  if (Player_charge >= 20){
     printf("Ready to fire\n");
     x = rand() % 3;
     if (x == 0 ){
@@ -65,21 +66,20 @@ int AL_shoot_cannons (int Player_charge)
 
 int AL_damageHandle (int WeaponNum, int weapondamage)
 {
-  int x, y = 0, hits = 0, critical = 0, miss = 0;
+  int x, y = 0, hits = 0, miss = 0;
   for (x = 0 ; x < WeaponNum ; x++) {
     y = rand()%6;
-    if (y <= 1) {
+    if (y <= 2) {
       miss++;
     }
-    if (y >= 2 && y<= 4) {
+    if (y >= 3 && y<= 4) {
       hits++;
     }
     if (y == 5) {
       hits++;
-      critical++;
     }
   }
-  printf("%d Shots hit the target, %d critical hits were dealt, %d Damage Dealt\n%d shots missed\n", hits, critical, hits*weapondamage, miss);
+  printf("%d Shots hit the target, %d Damage Dealt\n%d shots missed\n", hits, critical, hits*weapondamage, miss);
   return (hits*weapondamage);
 }
 
@@ -93,4 +93,25 @@ int tick (void)
 {
   SDL_Delay(TURNTIME);
   return 1;
+}
+
+int Critical_Damage  (void)
+{
+  int y, z;
+  for (z = 0 ; z < x ; z++){
+    y = rand % 6;
+    if (y <= 3 ){
+      return 1;
+/*double damage*/
+    }
+    if (y == 4) {
+      return 2;
+/*start a fire on ship*/
+    }
+    if (y == 5) {
+      return 3;
+/*destroy a cannon*/
+    }
+  }
+  return 0;
 }
