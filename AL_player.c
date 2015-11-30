@@ -8,8 +8,8 @@ void AL_presentStats(User *player){
   if(player->luck>5){
     printf("We're feeling lucky.\n");
   }
-  printf("Starting with a hull of %d per cent and %d coins lets sail to the horizon!\n",
-        player->health, player->gold);
+  printf("Starting with a hull of %d%%, %d crew members and %d coins lets sail to the horizon!\n",
+        player->health, player->crew, player->gold);
    printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
