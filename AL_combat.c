@@ -2,7 +2,7 @@
 
 int AL_playCombat(User *player, Encounter *player2)
 {
-  int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, damage = 0;
+  int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0;
   do {
     if (tick() == 1){
       if ((AL_getRetreatHealth(player) > AL_getHealth(player) )/*||
@@ -11,27 +11,31 @@ int AL_playCombat(User *player, Encounter *player2)
       retreat_Counter++;
       printf("%d turns till escape\n", 3 - retreat_Counter);
     }
-    Player_charge += AL_getspeed(player);
-    Enemy_charge += player2->speed;
+    Player_charge += ((float)AL_getCrew(player)/(float)AL_getWeaponNumber(player))*100;
+    Enemy_charge += ((float)player2->crew/(float)player2->weaponnumber)*100;
     if (retreat_Counter > 0) {
       printf("Retreating!\n");
     }
       if (AL_shoot_cannons(Player_charge) == 1){
-        Player_charge -= 20;
-        damage = AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player));
-        player2->health -= damage;
+        Player_charge = 0;
+        printf("You take a shot at the enemy!\n");
+        player2->health -= AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player));
       }
       if (AL_shoot_cannons(Enemy_charge) == 1){
-        Enemy_charge -= 20;
+        Enemy_charge = 0;
+        printf("The enemy takes a shot at you!\n");
         AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage));
+
       }
     if (player2->health <= 0){
-      printf("You sank the Enemy ship\n");
+      newloot = rand()%(player2->weaponnumber);
+      healing = ((100-AL_getHealth(player))/10);
+      printf("You sank the Enemy ship\nYour carpenter repaired the ship from %d to %d\n", AL_getHealth(player), AL_increaseHealth(player, healing));
+      printf("You salvaged %d worth of gold from the wreck, you now have %d gold pieces\n", newloot,(AL_increaseGold(player, newloot)));
       return 1;
     }
     if(AL_getHealth(player) <= 0){
       printf("Your ship was sunk by the enemy ship\n");
-
       return 0;
     }
     if (retreat_Counter==3){
@@ -40,14 +44,14 @@ int AL_playCombat(User *player, Encounter *player2)
     }
   }
 }
-while (AL_getHealth(player) >= 0 );
+while (AL_getHealth(player) >= 0 && player2->health >= 0);
 return 0;
 }
 
 int AL_shoot_cannons (int Player_charge)
 {
   int x;
-  if (Player_charge >= 20){
+  if (Player_charge >= 100){
     printf("Ready to fire\n");
     x = rand() % 3;
     if (x == 0 ){
@@ -79,7 +83,7 @@ int AL_damageHandle (int WeaponNum, int weapondamage)
       hits++;
     }
   }
-  printf("%d Shots hit the target, %d Damage Dealt\n%d shots missed\n", hits, critical, hits*weapondamage, miss);
+  printf("%d Shots hit the target, %d Damage Dealt\n%d shots missed\n", hits, hits*weapondamage, miss);
   return (hits*weapondamage);
 }
 
@@ -97,9 +101,8 @@ int tick (void)
 
 int Critical_Damage  (void)
 {
-  int y, z;
-  for (z = 0 ; z < x ; z++){
-    y = rand % 6;
+  int y;
+    y = rand() % 6;
     if (y <= 3 ){
       return 1;
 /*double damage*/
@@ -112,6 +115,5 @@ int Critical_Damage  (void)
       return 3;
 /*destroy a cannon*/
     }
-  }
   return 0;
 }

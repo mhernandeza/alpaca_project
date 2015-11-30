@@ -22,7 +22,7 @@ int readfile(Encounter* list){
     read_in_string(list[i].description,fp);
     read_in_string(list[i].pronoun,fp);
     read_in_string(list[i].weapontype,fp);
-    fscanf(fp,"%d\n%d\n%d\n%d\n\n",&list[i].weaponnumber,&list[i].weapondamage,&list[i].health,&list[i].speed);
+    fscanf(fp,"%d\n%d\n%d\n%d\n%d\n\n",&list[i].weaponnumber,&list[i].weapondamage,&list[i].crew,&list[i].health,&list[i].speed);
     if((list[i].weaponnumber == 1) && (list[i].weapontype[strlen(list[i].weapontype)-1] == 's')){
       list[i].weapontype[strlen(list[i].weapontype)-1]='\0';
     }
@@ -127,6 +127,7 @@ void copyencounter(Encounter* remote, Encounter* local){
   strcpy(remote->weapontype,local->weapontype);
   remote->weaponnumber = local->weaponnumber;
   remote->weapondamage = local->weapondamage;
+  remote->crew = local->crew;
   remote->health = local->health;
   remote->speed = local->speed;
   strcpy(remote->locale.direction,local->locale.direction);

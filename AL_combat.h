@@ -4,7 +4,7 @@
 #define BOOL int
 #define TRUE 1
 #define FALSE 0
-#define TURNTIME 750
+#define TURNTIME 1000 
 int tick (void);
 int retreat_condition (void);
 int AL_damageHandle (int WeaponNum, int weapondamage);

@@ -22,6 +22,7 @@ struct encounter{
   char weapontype[INFOTEXT];
   int weaponnumber;
   int weapondamage;
+  int crew;
   int health;
   int speed;
   Environment locale;

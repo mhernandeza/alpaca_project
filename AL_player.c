@@ -26,7 +26,7 @@ void AL_initializePlayer(User *player){
   player->speed=5;
   player->luck=1+(rand()%10);
   player->gold=1000;
-  player->creew=(rand()%20)+40;/*From 40 to 60*/
+  player->crew=(rand()%20)+40;/*From 40 to 60*/
 }
 
 void AL_programReaction(User *player, Encounter *test){
