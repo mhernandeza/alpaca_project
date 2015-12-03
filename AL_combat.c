@@ -2,7 +2,7 @@
 
 int AL_playCombat(User *player, Encounter *player2)
 {
-  int  Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0, surrender;
+  int  Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, surrender;
   do {
     if (tick() == 1){
       if (AL_getRetreatHealth(player) > AL_getHealth(player) ) {
@@ -11,15 +11,15 @@ int AL_playCombat(User *player, Encounter *player2)
       }
       if (player2->weaponnumber == 0 ) {
         printf("The enemy is defenseless, do you accept their surrender?\n1: Yes\n2: No\n");
-        scanf("%d", &surrender);
-        if (surrender == 1) {
-          printf("They give you a token of their appreciation\n");
-          AL_collectLoot(player, player2);
-          return 1;
+        if (scanf("%d", &surrender) == 1) {
+          if (surrender == 1) {
+            printf("They give you a token of their appreciation\n");
+            AL_collectLoot(player, player2);
+            return 1;
+          }
         }
         else {
           printf("Send them to a watery grave");
-          player2->health == 0;
           AL_collectLoot (player, player2);
           return 1;
         }
@@ -175,10 +175,11 @@ int AL_collectLoot (User *player, Encounter *player2)
   printf("You salvaged %d worth of gold from the wreck, you now have %d gold pieces\n", newloot,(AL_increaseGold(player, newloot)));
   if (Newcrew > 0 ) {
     printf("You find %d survivors, would you like to offer them a place on your crew?\n1: Yes\n2: No\n", Newcrew);
-    scanf("%d", &takecrew);
-    if (takecrew == 1) {
-      printf("You give them refuge, they are happy to be alive and dry!\n");
-      AL_increaseCrew(player, Newcrew);
+    if (scanf("%d", &takecrew) == 1){
+      if (takecrew == 1) {
+        printf("You give them refuge, they are happy to be alive and dry!\n");
+        AL_increaseCrew(player, Newcrew);
+      }
     }
     else {
       printf("Send the scurvy dogs to Davey Jones' locker\n");
