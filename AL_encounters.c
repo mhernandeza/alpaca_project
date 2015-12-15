@@ -66,9 +66,6 @@ int generate_environment(Environment* surroundings){
     }
   }
   return 0;
-/*Dan: if you can return the value roled in weather severity and pass it to Combat
-or write a way of passing it to combat I can use it to write weather modifiers
-to combat.*/  
 }
 
 /* Below: Create small functions to send information from the struct to other modules, etc */
