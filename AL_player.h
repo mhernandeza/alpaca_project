@@ -1,21 +1,7 @@
-# include "encounter.h"
+# include "AL_encounters.h"
+#include "state_data.h"
+#include "event_handler.h" //Change this later. We just need SDL
 # define WORDL 20
-
-struct user_ship{
-  char playerName[WORDL];
-  char shipName[WORDL];
-  char weaponType[WORDL];
-  int weaponNumber;/*From 20 to 50*/
-  int weaponDamage;/*1 or 2*/
-  int health; /*0 to 100*/
-  int speed;/*From 1 to 10*/
-  int luck;/*From 1 to 10*/
-  int gold;/*Starting with 1000*/
-  int crew;/*From 1 to 100*/
-  int retreatHealth;
-  int retreatWeapons;
-};
-typedef struct user_ship User;
 
 void AL_presentStats(User *player); /*Replace by SDL*/
 void AL_initializePlayer(User *player); /*Called by the driver*/

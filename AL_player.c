@@ -14,10 +14,9 @@ void AL_presentStats(User *player){
 }
 
 void AL_initializePlayer(User *player){
-  char w[WORDL];
-  printf("Input your name: ");
-  scanf("%s",w);
-  strcpy(player->playerName, w);
+  
+  
+  strcpy(player->playerName, "Lee");
   strcpy(player->shipName,"Black Pearl");
   strcpy(player->weaponType,"Cannons");
   player->weaponNumber=(rand()%30)+20;
@@ -27,6 +26,7 @@ void AL_initializePlayer(User *player){
   player->luck=1+(rand()%10);
   player->gold=1000;
   player->crew=(rand()%20)+40;/*From 40 to 60*/
+  player->oldTime = SDL_GetTicks();
 }
 
 void AL_programReaction(User *player, Encounter *test){

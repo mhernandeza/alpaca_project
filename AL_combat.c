@@ -2,31 +2,25 @@
 
 int AL_playCombat(User *player, Encounter *player2)
 {
-  int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0;
-  do {
-    if (tick() == 1){
+  static int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0;
+    if (tickPlayer() == 1){
       if ((AL_getRetreatHealth(player) > AL_getHealth(player) )/*||
       ((AL_getRetreatWeapons(player) == 1)  &&
       (AL_getEnemyRetreatWeapon(player2) > AL_getWeaponNumber(player)))*/) {
       retreat_Counter++;
       printf("%d turns till escape\n", 3 - retreat_Counter);
-    }
+      }
     Player_charge += ((float)AL_getCrew(player)/(float)AL_getWeaponNumber(player))*100;
-    Enemy_charge += ((float)player2->crew/(float)player2->weaponnumber)*100;
+    
     if (retreat_Counter > 0) {
       printf("Retreating!\n");
     }
-      if (AL_shoot_cannons(Player_charge) == 1){
+      if ((player->isFiring = (AL_shoot_cannons(Player_charge) == 1))){
         Player_charge = 0;
         printf("You take a shot at the enemy!\n");
         player2->health -= AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player));
       }
-      if (AL_shoot_cannons(Enemy_charge) == 1){
-        Enemy_charge = 0;
-        printf("The enemy takes a shot at you!\n");
-        AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage));
-
-      }
+      
     if (player2->health <= 0){
       newloot = rand()%(player2->weaponnumber);
       healing = ((100-AL_getHealth(player))/10);
@@ -43,8 +37,14 @@ int AL_playCombat(User *player, Encounter *player2)
       return 1;
     }
   }
-}
-while (AL_getHealth(player) >= 0 && player2->health >= 0);
+    if (tickEnemy(player2)){
+        Enemy_charge += ((float)player2->crew/(float)player2->weaponnumber)*100;
+        if ((player2->isFiring = (AL_shoot_cannons(Enemy_charge) == 1))){
+            Enemy_charge = 0;
+            printf("The enemy takes a shot at you!\n");
+            AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage));
+        }
+    }
 return 0;
 }
 
@@ -61,7 +61,7 @@ int AL_shoot_cannons (int Player_charge)
       printf("\n               WOOSH!\n\n");
     }
     if (x == 2) {
-      printf("                 KERPOW!\n\n");
+      printf("\n                 KERPOW!\n\n");
     }
     return 1;
   }
@@ -93,10 +93,21 @@ int retreat_condition (void)
   return 0;
 }
 
-int tick (void)
+int tickPlayer (void)
 {
-  SDL_Delay(TURNTIME);
-  return 1;
+    if(player.oldTime + TURNTIME > SDL_GetTicks()){
+       // printf("This ran\n");
+        return 0;
+    }
+    player.oldTime = SDL_GetTicks();
+    return 1;
+}
+int tickEnemy(Encounter *encounter){
+    if(encounter->oldTime + ENEMY_TURN_TIME > SDL_GetTicks()){
+        return 0;
+    }
+    encounter->oldTime = SDL_GetTicks();
+    return 1;
 }
 
 int Critical_Damage  (void)

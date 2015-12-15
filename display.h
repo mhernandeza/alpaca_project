@@ -1,11 +1,3 @@
-//
-//  display.h
-//  ALKrakenMain
-//
-//  Created by Lee's Mac on 11/12/15.
-//  Copyright © 2015 Walid Beydoun. All rights reserved.
-//
-
 #ifndef display_h
 #define display_h
 
@@ -13,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include "state_data.h"
+#include "AL_encounters.h"
 
 typedef int bool;
 #define true 1
@@ -38,6 +31,12 @@ void AL_setSpriteSizeAndLocation(AL_Sprite *spriteSheet, int xLocation, int yLoc
 bool AL_initWindowAndRenderer(SDL_Window **window, SDL_Renderer **renderTarget);
 bool AL_initImage();
 SDL_Texture *AL_loadTexture(char *path, SDL_Renderer *renderTarget);
-void AL_LoadMainMenuState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event event);
-void AL_LoadPlayGameState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event event);
+
+
+void AL_LoadMainMenuState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event);
+void AL_LoadOptionState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event);
+void AL_LoadPlayGameState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event, double deltaTime);
+void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_Event *event, double deltaTime, Encounter *encounter);
+void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter);
+
 #endif /* display_h */
