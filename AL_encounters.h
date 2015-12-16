@@ -10,6 +10,7 @@
 #define AL_ENCOUNTER_H
 
 struct environment{
+  int land;
   char direction[INFOTEXT];
   char weatherdescription[INFOTEXT];
   int weatherseverity;

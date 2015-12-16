@@ -120,25 +120,62 @@ void AL_getEncounter(Encounter *e){
   free(surroundings);
 }
 
-/*
-void AL_getEncounter(Encounter *e){
+
+void AL_chooseDirection(STUFF){
+
+}
+
+void AL_getEncounter(Encounter* e){
   Encounter* list;
-  Environment* surroundings;
   Encounter current;
   list = (Encounter*)malloc(sizeof(Encounter)*TOTALENCOUNTERS);
-  surroundings = (Environment*)malloc(sizeof(Environment)*COMPASSPOINTS);
   readfile(list);
-  generate_environment(surroundings);
-}
-
-void updateWorld(Encounter[WORLDSIZE+2][WORLDSIZE+2]){
 
 }
 
-void AL_chooseEncounter(STUFF){
+/* this function will fill the world with the initial state: sea, land and enemies to fight */
+void generateWorld(Encounter worldMap[WORLDSIZE+2][WORLDSIZE+2]){
+  int i,y,x,landcells,landseedX,landseedY;
+  for(y=0;y<WORLDSIZE+2;y++){
+    for(x=0;x<WORLDSIZE+2;x++){
+      wipe_encounter(&worldMap[y][x]);
+    }
+  }
+  // CREATION OF LAND. 10-20% of world to be land cells
+  landcells = (WORLDSIZE*WORLDSIZE)/((rand()%6)+5);
+  landseedX = (rand()%WORLDSIZE)+1;
+  landseedY = (rand()%WORLDSIZE)+1;
+  worldMap[landseedY][landseedX].locale.land = 1;
+  for(i=1;i<landcells;i++){
+
+  }
+  player.locationX = STUFF;
+  player.locationY = STUFF:
+}
+
+void wipe_encounter(Encounter *e){
+  e->ID = -1;
+  e->name[0] = 0;
+  e->description[0] = 0;
+  e->pronoun[0] = 0;
+  e->weapontype[0] = 0;
+  e->weaponnumber = 0;
+  e->weapondamage = 0;
+  e->crew = 0;
+  e->health = 0;
+  e->speed = 0;
+  e->oldTime = 0;
+  e->isFiring = 0;
+  e->locale.land = 0;
+  e->locale.direction[0] = 0;
+  e->locale.weatherdescription[0] = 0;
+  e->locale.weatherseverity = 0;
+}
+
+void updateWorld(Encounter worldMap[WORLDSIZE+2][WORLDSIZE+2]){
 
 }
-*/
+
 
 void copyencounter(Encounter* remote, Encounter* local){
   remote->ID = local->ID;
@@ -151,6 +188,7 @@ void copyencounter(Encounter* remote, Encounter* local){
   remote->crew = local->crew;
   remote->health = local->health;
   remote->speed = local->speed;
+  remote->locale.land = local->locale.land;
   strcpy(remote->locale.direction,local->locale.direction);
   strcpy(remote->locale.weatherdescription,local->locale.weatherdescription);
   remote->locale.weatherseverity = local->locale.weatherseverity;

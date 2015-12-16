@@ -9,6 +9,7 @@ typedef int bool;
 #define false 0
 
 #define WORD_LEN 30
+#define WORLDSIZE 5
 
 struct playerShip {
     char playerName[WORD_LEN];
@@ -25,6 +26,8 @@ struct playerShip {
     int retreatWeapons;
     int oldTime;
     bool isFiring;
+    int locationX;
+    int locationY;
 };
 typedef struct playerShip User;
 
