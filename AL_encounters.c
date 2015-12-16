@@ -105,7 +105,7 @@ void AL_getEncounter(Encounter *e){
   chosen = -1;
   do{
     if((c = getchar()) == '1'){
-    
+
       chosen = random_encounter1;
     }
     else if(c == '2'){
@@ -134,4 +134,5 @@ void copyencounter(Encounter* remote, Encounter* local){
   strcpy(remote->locale.direction,local->locale.direction);
   strcpy(remote->locale.weatherdescription,local->locale.weatherdescription);
   remote->locale.weatherseverity = local->locale.weatherseverity;
+  remote->oldTime = SDL_GetTicks();
 }
