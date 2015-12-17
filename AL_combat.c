@@ -1,6 +1,6 @@
 # include "AL_combat.h"
 
-int AL_playCombat(User *player, Encounter *player2)
+int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
 {
   static int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0;
     if (tickPlayer() == 1){
@@ -26,10 +26,12 @@ int AL_playCombat(User *player, Encounter *player2)
       healing = ((100-AL_getHealth(player))/10);
       printf("You sank the Enemy ship\nYour carpenter repaired the ship from %d to %d\n", AL_getHealth(player), AL_increaseHealth(player, healing));
       printf("You salvaged %d worth of gold from the wreck, you now have %d gold pieces\n", newloot,(AL_increaseGold(player, newloot)));
+      *StateOfGame = MAIN_MENU;
       return 1;
     }
     if(AL_getHealth(player) <= 0){
       printf("Your ship was sunk by the enemy ship\n");
+        *StateOfGame = GAME_OVER;
       return 0;
     }
     if (retreat_Counter==3){
@@ -45,6 +47,7 @@ int AL_playCombat(User *player, Encounter *player2)
             AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage));
         }
     }
+    
 return 0;
 }
 

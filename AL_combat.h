@@ -11,5 +11,5 @@ int retreat_condition (void);
 int AL_damageHandle (int WeaponNum, int weapondamage);
 int AL_reloadCannons (int Weapon_Number);
 int AL_shoot_cannons (int Player_charge);
-int AL_playCombat(User *player, Encounter *player2);
+int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame);
 

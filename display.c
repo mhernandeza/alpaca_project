@@ -5,6 +5,7 @@ const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
 void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite);
+void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter);
 
 //Call this function to initialise the SDL_Window and renderer. It takes pointers to the pointers of the window
 //and renderer. It returns true if both the window and the renderer were initialised.
@@ -147,7 +148,7 @@ void AL_LoadMainMenuState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SD
     if (event->key.keysym.sym == SDLK_RETURN){
         if (skullSprite.destination.y == startPosition){
             initialised = 0;
-            *StateOfGame = COMBAT_STATE;
+            *StateOfGame = BEHAVIOUR_STATE;
         } else if (skullSprite.destination.y == exitPosition){
             initialised = 0;
             event->type = SDL_QUIT;
@@ -270,7 +271,7 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
         AL_setSpriteSheetData(&cannonSprite, 100, 5, 22);
         AL_setSpriteSizeAndLocation(&cannonSprite, 280, 270, 600, 200); */
         
-        HUD.image = AL_loadTexture("images/mockCombatSprites/hud.png", mainRenderer);
+        HUD.image = AL_loadTexture("images/mockCombatSprites/HUD2.png", mainRenderer);
     
         
         intialised = 1;
@@ -324,4 +325,106 @@ void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite,
             encounter->isFiring = false;
         }
     }
+}
+
+void AL_LoadGameOverState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event){
+    static AL_Sprite gameOverSprite;
+    static int initialised = 0;
+    
+    if(!initialised){
+        gameOverSprite.image = AL_loadTexture("images/gameOverSprites/gameOver.png", mainRenderer);
+    }
+    
+    SDL_RenderClear(mainRenderer);
+    SDL_RenderCopy(mainRenderer, gameOverSprite.image, NULL, NULL);
+    
+    if(event->key.keysym.sym == SDLK_RETURN){
+        SDL_DestroyTexture(gameOverSprite.image);
+        *StateOfGame = MAIN_MENU;
+    }
+    
+}
+
+void AL_LoadLogoState(SDL_Renderer *mainRenderer, GameState *StateOfGame){
+    static SDL_Texture *logo;
+    static int oldTime;
+    static int initialised = 0;
+    static int alpha = 0;
+    if(!initialised){
+        logo = AL_loadTexture("images/logo.png", mainRenderer);
+        printf("%d\n", SDL_SetTextureAlphaMod(logo, alpha));
+        initialised = 1;
+        oldTime = SDL_GetTicks();
+    }
+    
+    
+    
+    SDL_RenderClear(mainRenderer);
+    SDL_RenderCopy(mainRenderer, logo, NULL, NULL);
+    
+    
+    if(oldTime + 6000 < SDL_GetTicks()){
+        *StateOfGame = MAIN_MENU;
+    }
+    if(oldTime + 4500 > SDL_GetTicks()){
+        if(alpha < 255){
+            alpha = alpha + 1;
+            printf("%d\n", alpha);
+        }
+        SDL_SetTextureAlphaMod(logo, alpha);
+
+        
+    }
+    
+}
+
+void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Event *event){
+    enum currentScene { yesScene, noScene, numScene};
+    
+    static AL_Sprite behaviourYes;
+    static AL_Sprite behaviourNo;
+    static AL_Sprite behaviourNum;
+    static AL_Sprite numbers;
+    static int scene = yesScene;
+    static int initialised = 0;
+    
+    if(!initialised){
+        behaviourYes.image = AL_loadTexture("images/behaviourSprites/behaviourYes.jpg", mainRender);
+        behaviourNo.image = AL_loadTexture("images/behaviourSprites/behaviourNo.jpg", mainRender);
+        behaviourNum.image = AL_loadTexture("images/behaviourSprites/behaviourNum.png", mainRender);
+        
+        numbers.image = AL_loadTexture("images/behaviourSprites/numbers.png", mainRender);
+        AL_setSpriteSheetData(&numbers, 20, 2, 5);
+        AL_setSpriteSizeAndLocation(&numbers, 500, 500, 50, 50);
+        
+        SDL_RenderCopy(mainRender, behaviourYes.image, NULL, NULL);
+        initialised = 1;
+    }
+    
+    SDL_RenderClear(mainRender);
+    if(event->key.keysym.sym == SDLK_d || event->key.keysym.sym == SDLK_a || event->key.keysym.sym == SDLK_RIGHT || event->key.keysym.sym == SDLK_LEFT){
+        if(scene == yesScene){
+            scene = noScene;
+        } else if (scene == noScene) {
+            scene = yesScene;
+        }
+    }
+    
+    if (scene == yesScene){
+        SDL_RenderCopy(mainRender, behaviourYes.image, NULL, NULL);
+    } else {
+        SDL_RenderCopy(mainRender, behaviourNo.image, NULL, NULL);
+    }
+    
+    if(event->key.keysym.sym == SDLK_RETURN){
+        if (scene == noScene){
+            *StateOfGame = MAIN_MENU;
+        }
+        if (scene == yesScene){
+            *StateOfGame = COMBAT_STATE;
+        }
+    }
+    
+    
+    
 }

@@ -2,10 +2,9 @@
 #define display_h
 
 #include <stdio.h>
-#include <SDL2/SDL.h>
-#include <SDL2_image/SDL_image.h>
+
 #include "state_data.h"
-#include "AL_encounters.h"
+
 
 typedef int bool;
 #define true 1
@@ -37,6 +36,8 @@ void AL_LoadMainMenuState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SD
 void AL_LoadOptionState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event);
 void AL_LoadPlayGameState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event, double deltaTime);
 void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_Event *event, double deltaTime, Encounter *encounter);
-void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter);
-
+void AL_LoadGameOverState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event);
+void AL_LoadLogoState(SDL_Renderer *mainRenderer, GameState *StateOfGame);
+void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Event *event);
 #endif /* display_h */
+

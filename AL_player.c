@@ -14,8 +14,8 @@ void AL_presentStats(User *player){
 }
 
 void AL_initializePlayer(User *player){
-
-
+  
+  
   strcpy(player->playerName, "Lee");
   strcpy(player->shipName,"Black Pearl");
   strcpy(player->weaponType,"Cannons");
@@ -27,8 +27,6 @@ void AL_initializePlayer(User *player){
   player->gold=1000;
   player->crew=(rand()%20)+40;/*From 40 to 60*/
   player->oldTime = SDL_GetTicks();
-  player->locationX = 0;
-  player->locationY = 0;
 }
 
 void AL_programReaction(User *player, Encounter *test){

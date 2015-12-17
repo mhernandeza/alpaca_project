@@ -40,7 +40,6 @@ void read_in_string(char s[],FILE *fp){
   s[i] = '\0';
 }
 
-/* is sent an 8 cell Environment array signifying the player's surrounding cells, and fills them with random weather */
 int generate_environment(Environment* surroundings){
   int i;
   strcpy(surroundings[0].direction,"north");
@@ -106,6 +105,7 @@ void AL_getEncounter(Encounter *e){
   chosen = -1;
   do{
     if((c = getchar()) == '1'){
+    
       chosen = random_encounter1;
     }
     else if(c == '2'){
@@ -119,26 +119,6 @@ void AL_getEncounter(Encounter *e){
   free(list);
   free(surroundings);
 }
-
-/*
-void AL_getEncounter(Encounter *e){
-  Encounter* list;
-  Environment* surroundings;
-  Encounter current;
-  list = (Encounter*)malloc(sizeof(Encounter)*TOTALENCOUNTERS);
-  surroundings = (Environment*)malloc(sizeof(Environment)*COMPASSPOINTS);
-  readfile(list);
-  generate_environment(surroundings);
-}
-
-void updateWorld(Encounter[WORLDSIZE+2][WORLDSIZE+2]){
-
-}
-
-void AL_chooseEncounter(STUFF){
-
-}
-*/
 
 void copyencounter(Encounter* remote, Encounter* local){
   remote->ID = local->ID;
@@ -154,5 +134,4 @@ void copyencounter(Encounter* remote, Encounter* local){
   strcpy(remote->locale.direction,local->locale.direction);
   strcpy(remote->locale.weatherdescription,local->locale.weatherdescription);
   remote->locale.weatherseverity = local->locale.weatherseverity;
-  remote->oldTime = SDL_GetTicks();
 }

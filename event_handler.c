@@ -20,8 +20,20 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_LoadOptionState(mainRenderer, StateOfGame, event);
             break;
         case COMBAT_STATE:
-            AL_playCombat(&player, encounter);
+            AL_playCombat(&player, encounter, StateOfGame);
             AL_LoadCombatState(mainRenderer, StateOfGame, event, deltaTime, encounter);
+            AL_renderUIStats(mainRenderer);
+            AL_renderEnemyStats(mainRenderer, encounter);
+            break;
+        case GAME_OVER:
+            AL_LoadGameOverState(mainRenderer, StateOfGame, event);
+            break;
+        case LOGO_STATE:
+            AL_LoadLogoState(mainRenderer, StateOfGame);
+            break;
+        case BEHAVIOUR_STATE:
+            AL_LoadBehaviourState(mainRenderer, StateOfGame, event);
+            AL_renderUIStats(mainRenderer);
             break;
         default:
             break;
@@ -30,7 +42,7 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
 
 SDL_Event AL_checkForPress(GameState StateOfGame){
     SDL_Event event;
-    if(StateOfGame == MAIN_MENU){
+    if(StateOfGame == MAIN_MENU || StateOfGame == GAME_OVER){
         while(SDL_PollEvent(&event) != 0){
             if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){
@@ -68,6 +80,26 @@ SDL_Event AL_checkForPress(GameState StateOfGame){
             }
         }
     }
+    if (StateOfGame == BEHAVIOUR_STATE){
+        while(SDL_PollEvent(&event) != 0){
+            if(event.type == SDL_KEYDOWN){
+                switch(event.key.keysym.sym){
+                    case SDLK_RIGHT:
+                    case SDLK_LEFT:
+                    case SDLK_a:
+                    case SDLK_d:
+                    case SDLK_RETURN:
+                        return event;
+                        break;
+                    default:
+                        event.key.keysym.sym = SDLK_0;
+                        return event;
+                        break;
+                }
+            }
+        }
+    }
+   
     event.key.keysym.sym = SDLK_0;
     return event;
 }

@@ -3,13 +3,18 @@
 #define state_data_h
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <SDL2/SDL.h>
+#include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
+#include "AL_encounters.h"
 
 typedef int bool;
 #define true 1
 #define false 0
 
 #define WORD_LEN 30
-#define WORLDSIZE 5
 
 struct playerShip {
     char playerName[WORD_LEN];
@@ -26,12 +31,10 @@ struct playerShip {
     int retreatWeapons;
     int oldTime;
     bool isFiring;
-    int locationX;
-    int locationY;
 };
 typedef struct playerShip User;
 
-enum GameState { MAIN_MENU, OPTIONS_MENU, PLAY_GAME, COMBAT_STATE};
+enum GameState { LOGO_STATE, MAIN_MENU, OPTIONS_MENU, PLAY_GAME, BEHAVIOUR_STATE, COMBAT_STATE, GAME_OVER};
 typedef enum GameState GameState;
 
 void AL_initialisePlayerShip();
