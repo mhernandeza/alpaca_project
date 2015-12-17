@@ -11,16 +11,16 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
       printf("%d turns till escape\n", 3 - retreat_Counter);
       }
     Player_charge += ((float)AL_getCrew(player)/(float)AL_getWeaponNumber(player))*100;
-    
+
     if (retreat_Counter > 0) {
       printf("Retreating!\n");
     }
       if ((player->isFiring = (AL_shoot_cannons(Player_charge) == 1))){
         Player_charge = 0;
         printf("You take a shot at the enemy!\n");
-        player2->health -= AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player));
+        player2->health -= AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player), 2, player, player2);
       }
-      
+
     if (player2->health <= 0){
       newloot = rand()%(player2->weaponnumber);
       healing = ((100-AL_getHealth(player))/10);
@@ -44,10 +44,10 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
         if ((player2->isFiring = (AL_shoot_cannons(Enemy_charge) == 1))){
             Enemy_charge = 0;
             printf("The enemy takes a shot at you!\n");
-            AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage));
+            AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage, 1, player, player2));
         }
     }
-    
+
 return 0;
 }
 
@@ -71,7 +71,7 @@ int AL_shoot_cannons (int Player_charge)
   return 0;
 }
 
-int AL_damageHandle (int WeaponNum, int weapondamage)
+int AL_damageHandle (int WeaponNum, int weapondamage, int defender, User *player1, Encounter *player2)
 {
   int x, y = 0, hits = 0, miss = 0;
   for (x = 0 ; x < WeaponNum ; x++) {
@@ -84,6 +84,13 @@ int AL_damageHandle (int WeaponNum, int weapondamage)
     }
     if (y == 5) {
       hits++;
+      if (defender == 1){
+        AL_decreaseHealth(player1 ,Critical_Damage(player1, player2, 2));
+      }
+      if (defender == 2) {
+
+        player2->health -= Critical_Damage(player1, player2, 1);
+      }
     }
   }
   printf("%d Shots hit the target, %d Damage Dealt\n%d shots missed\n", hits, hits*weapondamage, miss);
@@ -113,21 +120,77 @@ int tickEnemy(Encounter *encounter){
     return 1;
 }
 
-int Critical_Damage  (void)
+int AL_critical_Damage  (User *player, Encounter *player2, int attacker)
 {
   int y;
-    y = rand() % 6;
-    if (y <= 3 ){
+  y = rand() % 6;
+  if (player2->ID == 3) {
+    //the Kracken exception to critical hits
+    player2->health -= 5;
+    printf("The cannon ball hits the kracken's eye!");
+  }
+  printf("The shot was super effective! ");
+  if (y <= 1 ){
+    printf("It did aditional damage\n");
+    if (attacker == 1) {
+      player2->health -= 1;
+    }
+    else {
+      AL_decreaseHealth(player, 1);
+    }
+  }
+  if (y == 2 || y == 3 ) {
+    printf("It took out a cannon!\n");
+    if (attacker == 1) {
+      player2->weaponnumber -= 1;
+      if(player2->weaponnumber < 0){
+        player2->weaponnumber=0;
+      }
+    }
+  }
+  else {
+    AL_decreaseWeapons(player, 1);
+  }
+  if (y == 4 || y == 5) {
+    printf("It killed a crew member\n");
+    if (attacker == 1) {
+      player2->crew -= 1;
+    }
+    else {
+      AL_decreaseCrew(player, 1);
+    }
+  }
+  return 0;
+}
+
+
+int AL_surrender (player, player2)
+{
+  int surrender;
+  if (player2->weaponnumber == 0 ) {
+    printf("The enemy is defenseless, do you accept their surrender?\n1: Yes\n2: No\n");
+    if (scanf("%d", &surrender) == 1) {
+      if (surrender == 1) {
+        printf("They give you a token of their appreciation\n");
+        AL_collectLoot(player, player2);
+        return 1;
+      }
+    }
+    else {
+      printf("Send them to a watery grave");
+      AL_collectLoot (player, player2);
       return 1;
-/*double damage*/
     }
-    if (y == 4) {
-      return 2;
-/*start a fire on ship*/
-    }
-    if (y == 5) {
-      return 3;
-/*destroy a cannon*/
-    }
+  }
+  return 0;
+}
+
+int AL_GhostShip (player, player2)
+{
+  if (player2->crew <= 0 ){
+    printf("The enemy ship is a ghost ship? We collect what is left");
+    AL_collectLoot(player, player2);
+    return 1;
+  }
   return 0;
 }
