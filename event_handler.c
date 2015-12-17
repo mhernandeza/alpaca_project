@@ -88,6 +88,8 @@ SDL_Event AL_checkForPress(GameState StateOfGame){
                     case SDLK_LEFT:
                     case SDLK_a:
                     case SDLK_d:
+                    case SDLK_w:
+                    case SDLK_s:
                     case SDLK_RETURN:
                         return event;
                         break;

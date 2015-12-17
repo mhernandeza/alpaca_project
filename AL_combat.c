@@ -1,5 +1,7 @@
 # include "AL_combat.h"
 
+int AL_critical_Damage  (User *player, Encounter *player2, int attacker);
+
 int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
 {
   static int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0;
@@ -85,11 +87,11 @@ int AL_damageHandle (int WeaponNum, int weapondamage, int defender, User *player
     if (y == 5) {
       hits++;
       if (defender == 1){
-        AL_decreaseHealth(player1 ,Critical_Damage(player1, player2, 2));
+        AL_decreaseHealth(player1 ,AL_critical_Damage(player1, player2, 2));
       }
       if (defender == 2) {
 
-        player2->health -= Critical_Damage(player1, player2, 1);
+        player2->health -= AL_critical_Damage(player1, player2, 1);
       }
     }
   }
@@ -163,8 +165,19 @@ int AL_critical_Damage  (User *player, Encounter *player2, int attacker)
   return 0;
 }
 
+int AL_collectLoot(User *player, Encounter *player2){
+    int newloot, healing, newcrew;
+    newloot = 100 + rand()%(player2->weaponnumber + 1);
+    healing = ((100 - AL_getHealth(player))/10);
+    newcrew = rand()%(player2->crew/10);
+    if(newcrew > 0){
+        
+    }
+    return 1;
+}
 
-int AL_surrender (player, player2)
+
+int AL_surrender (User *player,Encounter *player2)
 {
   int surrender;
   if (player2->weaponnumber == 0 ) {
@@ -185,7 +198,7 @@ int AL_surrender (player, player2)
   return 0;
 }
 
-int AL_GhostShip (player, player2)
+int AL_GhostShip (User *player, Encounter *player2)
 {
   if (player2->crew <= 0 ){
     printf("The enemy ship is a ghost ship? We collect what is left");

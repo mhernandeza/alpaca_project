@@ -15,4 +15,6 @@ void AL_renderFont(SDL_Renderer *mainRenderer, SDL_Color color, TTF_Font *fontFi
 void AL_renderUIStats(SDL_Renderer *mainRender);
 char* itoa(int num, char* str, int base);
 void AL_renderEnemyStats(SDL_Renderer *mainRenderer, Encounter *encounter);
+void AL_renderNumbers(SDL_Renderer *mainRender, int value);
+void AL_renderDescription(SDL_Renderer *mainRenderer, char *stringToRender);
 #endif

@@ -403,28 +403,60 @@ void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL
     
     SDL_RenderClear(mainRender);
     if(event->key.keysym.sym == SDLK_d || event->key.keysym.sym == SDLK_a || event->key.keysym.sym == SDLK_RIGHT || event->key.keysym.sym == SDLK_LEFT){
-        if(scene == yesScene){
+        if(scene == yesScene && scene != numScene){
             scene = noScene;
-        } else if (scene == noScene) {
+        } else if (scene == noScene && scene != numScene) {
             scene = yesScene;
+        }
+    }
+    
+    if(event->key.keysym.sym == SDLK_w){
+        player.retreatHealth++;
+        if(player.retreatHealth > 99){
+            player.retreatHealth = 0;
+        }
+    }
+    if (event->key.keysym.sym == SDLK_s){
+        player.retreatHealth--;
+        if(player.retreatHealth < 0){
+            player.retreatHealth = 99;
         }
     }
     
     if (scene == yesScene){
         SDL_RenderCopy(mainRender, behaviourYes.image, NULL, NULL);
-    } else {
+    } else if (scene == noScene) {
         SDL_RenderCopy(mainRender, behaviourNo.image, NULL, NULL);
+    } else if (scene == numScene){
+        SDL_RenderCopy(mainRender, behaviourNum.image, NULL, NULL);
+        AL_renderNumbers(mainRender, player.retreatHealth);
     }
+    
+    if(scene != numScene){
+       // AL_renderDescription(mainRender, "Would you like to retreat based on your hull.");
+    } else if (scene == numScene){
+        AL_renderDescription(mainRender, "At what health would you like to retreat at?");
+    }
+    
     
     if(event->key.keysym.sym == SDLK_RETURN){
         if (scene == noScene){
-            *StateOfGame = MAIN_MENU;
-        }
-        if (scene == yesScene){
+            SDL_DestroyTexture(behaviourYes.image);
+            SDL_DestroyTexture(behaviourNo.image);
+            SDL_DestroyTexture(behaviourNum.image);
+            SDL_DestroyTexture(numbers.image);
+            player.retreatHealth = 0;
             *StateOfGame = COMBAT_STATE;
         }
+        if (scene == numScene){
+            *StateOfGame = COMBAT_STATE;
+            initialised = 0;
+        }
+        if (scene == yesScene){
+            scene = numScene;
+            
+        }
+        
     }
-    
-    
     
 }

@@ -5,10 +5,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <SDL2_ttf/SDL_ttf.h>
 #include "AL_encounters.h"
+#include "AL_ttf_fonts.h"
 
 typedef int bool;
 #define true 1

@@ -111,6 +111,46 @@ void AL_renderEnemyStats(SDL_Renderer *mainRenderer, Encounter *encounter){
     strcat(stringToRender, "%");
     AL_renderFont( mainRenderer, color, fontFile, x, y, stringToRender);
     
+    AL_renderFont(mainRenderer, color, fontFile, 500, 0, encounter->name);
+    
+    free(stringToRender);
+    TTF_CloseFont(fontFile);
+    
+}
+
+void AL_renderNumbers(SDL_Renderer *mainRender, int value) {
+    char *stringToRender = (char *)malloc(sizeof(char) * 10);
+    SDL_Color color = {83, 62, 0, 0};
+    TTF_Font *fontFile;
+    int x = 575, y = 525;
+    
+    AL_openFontFile(&fontFile, FONT_NAME_2, 120);
+    stringToRender = itoa(value, stringToRender, 10);
+    if(value < 10){
+        AL_renderFont(mainRender, color, fontFile, x + 63, y, stringToRender);
+        AL_renderFont(mainRender, color, fontFile, x, y, "0");
+    } else  if (value < 20){
+        AL_renderFont(mainRender, color, fontFile, x + 20, y, stringToRender);
+    } else {
+        AL_renderFont(mainRender, color, fontFile, x , y, stringToRender);
+
+    }
+    
+    
+    free(stringToRender);
+    TTF_CloseFont(fontFile);
+}
+
+void AL_renderDescription(SDL_Renderer *mainRenderer, char *stringToRender){
+    SDL_Color color = {83, 62, 0, 0};
+    TTF_Font *fontFile;
+    int x = 150, y = 275;
+    
+    AL_openFontFile(&fontFile, FONT_NAME_2, 30);
+    
+    AL_renderFont(mainRenderer, color, fontFile, x, y, stringToRender);
+    TTF_CloseFont(fontFile);
+    
 }
 
 char* itoa(int num, char* str, int base){
