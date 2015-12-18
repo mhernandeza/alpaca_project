@@ -17,4 +17,5 @@ char* itoa(int num, char* str, int base);
 void AL_renderEnemyStats(SDL_Renderer *mainRenderer, Encounter *encounter);
 void AL_renderNumbers(SDL_Renderer *mainRender, int value);
 void AL_renderDescription(SDL_Renderer *mainRenderer, char *stringToRender);
+void stringsplit (char *test, char string[100][100]);
 #endif
