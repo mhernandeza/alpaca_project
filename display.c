@@ -6,6 +6,8 @@ const int SCREEN_HEIGHT = 720;
 
 void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite);
 void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter);
+void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite);
+void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter);
 
 //Call this function to initialise the SDL_Window and renderer. It takes pointers to the pointers of the window
 //and renderer. It returns true if both the window and the renderer were initialised.
@@ -108,6 +110,49 @@ void AL_setSpriteSizeAndLocation(AL_Sprite *spriteSheet, int xLocation, int yLoc
     
 }
 
+
+void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite){
+    if(player.isFiring){
+        AL_getNextFrame(cannonSprite);
+        SDL_RenderCopy(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination);
+        if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
+            player.isFiring = false;
+        }
+    }
+}
+
+void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter){
+    if(encounter->isFiring){
+        AL_getNextFrame(cannonSprite);
+        SDL_RenderCopyEx(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination, 0.0, NULL, true);
+        if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
+            encounter->isFiring = false;
+        }
+    }
+}
+
+void copyEncounter(Encounter *encounter, Encounter encounterFromArr){
+    if(encounter == NULL){
+        return;
+    }
+    encounter->ID = encounterFromArr.ID;
+    encounter->crew = encounterFromArr.crew;
+    encounter->health = encounterFromArr.health;
+    encounter->oldTime = encounterFromArr.oldTime;
+    encounter->isFiring = encounterFromArr.isFiring;
+    encounter->weaponnumber = encounterFromArr.weaponnumber;
+    encounter->weapondamage = encounterFromArr.weapondamage;
+    encounter->locale.weatherseverity = encounterFromArr.locale.weatherseverity;
+    strcpy(encounter->description, encounterFromArr.description);
+    strcpy(encounter->name, encounterFromArr.name);
+    strcpy(encounter->locale.direction, encounterFromArr.locale.direction);
+    strcpy(encounter->locale.weatherdescription, encounterFromArr.locale.weatherdescription);
+}
+
+
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+
 void AL_LoadMainMenuState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event){
     const int startPosition = 340;
     const int nextMenuElement = 125;
@@ -148,7 +193,7 @@ void AL_LoadMainMenuState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SD
     if (event->key.keysym.sym == SDLK_RETURN){
         if (skullSprite.destination.y == startPosition){
             initialised = 0;
-            *StateOfGame = BEHAVIOUR_STATE;
+            *StateOfGame = WORLD_STATE;
         } else if (skullSprite.destination.y == exitPosition){
             initialised = 0;
             event->type = SDL_QUIT;
@@ -177,7 +222,6 @@ void AL_LoadOptionState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_
     }
 
 }
-
 
 void AL_LoadPlayGameState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event, double deltaTime){
     static AL_Sprite worldMap;
@@ -245,7 +289,7 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
     static AL_Sprite cannonSpriteEnemy;
     static AL_Sprite HUD;
     static int intialised = 0;
-    
+    //TODO Fix comments
     if(intialised == 0){
        // storm.image = AL_loadTexture("images/mockCombatSprites/storm.jpg", mainRenderer);
        // AL_setSpriteSheetData(&storm, 200, 9, 3);
@@ -254,37 +298,38 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
         playerShip.image = AL_loadTexture("images/mockCombatSprites/playerShip.png", mainRenderer);
         AL_setSpriteSheetData(&playerShip, 150, 9, 1);
         AL_setSpriteSizeAndLocation(&playerShip, 200, 280, 250, 250);
-
-        enemyShip.image = AL_loadTexture("images/mockCombatSprites/enemyShip.png", mainRenderer);
-        AL_setSpriteSheetData(&enemyShip, 120, 10, 1);
-        AL_setSpriteSizeAndLocation(&enemyShip, 760, 270, 250, 250);
-
+       // if(encounter->ID){
+            enemyShip.image = AL_loadTexture("images/mockCombatSprites/krakenBody2.png", mainRenderer);
+            AL_setSpriteSheetData(&enemyShip, 120, 5, 1);
+            AL_setSpriteSizeAndLocation(&enemyShip, 760, 270, 350, 250);
+       // } else {
+        //    enemyShip.image = AL_loadTexture("images/mockCombatSprites/enemyShip.png", mainRenderer);
+        //    AL_setSpriteSheetData(&enemyShip, 120, 10, 1);
+        //    AL_setSpriteSizeAndLocation(&enemyShip, 760, 270, 250, 250);
+       // }
         
         cannonSprite.image = AL_loadTexture("images/mockCombatSprites/cannon6.png", mainRenderer);
         AL_setSpriteSheetData(&cannonSprite, 40, 2, 35);
         AL_setSpriteSizeAndLocation(&cannonSprite, 300, 260, 600, 300);
+       
+        cannonSpriteEnemy.image = AL_loadTexture("images/mockCombatSprites/attack.png", mainRenderer);
+        AL_setSpriteSheetData(&cannonSpriteEnemy, 90, 10, 19);
+        AL_setSpriteSizeAndLocation(&cannonSpriteEnemy, 140, 370,180, 180);
         
-        cannonSpriteEnemy.image = AL_loadTexture("images/mockCombatSprites/cannon6.png", mainRenderer);
-        AL_setSpriteSheetData(&cannonSpriteEnemy, 40, 2, 35);
-        AL_setSpriteSizeAndLocation(&cannonSpriteEnemy, 300, 260, 600, 300);
         
-       /* cannonSprite.image = AL_loadTexture("images/mockCombatSprites/cannon8.png", mainRenderer);
-        AL_setSpriteSheetData(&cannonSprite, 100, 5, 22);
-        AL_setSpriteSizeAndLocation(&cannonSprite, 280, 270, 600, 200); */
+        //cannonSpriteEnemy.image = AL_loadTexture("images/mockCombatSprites/cannon6.png", mainRenderer);
+        //AL_setSpriteSheetData(&cannonSpriteEnemy, 40, 2, 35);
+        //AL_setSpriteSizeAndLocation(&cannonSpriteEnemy, 300, 260, 600, 300);
         
         HUD.image = AL_loadTexture("images/mockCombatSprites/HUD2.png", mainRenderer);
-    
-        
         intialised = 1;
     }
     
     AL_getNextFrame(&playerShip);
     AL_getNextFrame(&enemyShip);
    
-    
     SDL_RenderClear(mainRenderer);
     SDL_RenderCopy(mainRenderer, background.image, NULL, NULL);
-    
     
     playEnemyFireAnimation(mainRenderer, &cannonSpriteEnemy, encounter);
     SDL_RenderCopy(mainRenderer, enemyShip.image, &enemyShip.source, &enemyShip.destination);
@@ -305,26 +350,6 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
         //TODO when event happens play animation
     }
     
-}
-
-void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite){
-    if(player.isFiring){
-        AL_getNextFrame(cannonSprite);
-        SDL_RenderCopy(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination);
-        if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
-            player.isFiring = false;
-        }
-    }
-}
-
-void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter){
-    if(encounter->isFiring){
-        AL_getNextFrame(cannonSprite);
-        SDL_RenderCopyEx(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination, 0.0, NULL, true);
-        if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
-            encounter->isFiring = false;
-        }
-    }
 }
 
 void AL_LoadGameOverState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event){
@@ -357,11 +382,8 @@ void AL_LoadLogoState(SDL_Renderer *mainRenderer, GameState *StateOfGame){
         oldTime = SDL_GetTicks();
     }
     
-    
-    
     SDL_RenderClear(mainRenderer);
     SDL_RenderCopy(mainRenderer, logo, NULL, NULL);
-    
     
     if(oldTime + 6000 < SDL_GetTicks()){
         *StateOfGame = MAIN_MENU;
@@ -372,7 +394,6 @@ void AL_LoadLogoState(SDL_Renderer *mainRenderer, GameState *StateOfGame){
             printf("%d\n", alpha);
         }
         SDL_SetTextureAlphaMod(logo, alpha);
-
         
     }
     
@@ -458,7 +479,82 @@ void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL
             scene = numScene;
             
         }
-        
     }
+}
+
+void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Event *event, Encounter *encounter, Encounter encounterArray[8]){
+    enum currentScene { neScene, nnScene, nwScene};
+    
+    static AL_Sprite compassNE;
+    static AL_Sprite compassNW;
+    static AL_Sprite compassNN;
+    static int scene = nnScene;
+    static int initialised = 0;
+    if(!initialised){
+        compassNE.image = AL_loadTexture("images/worldStateSprites/northEast.jpg", mainRender);
+        compassNW.image = AL_loadTexture("images/worldStateSprites/northWest.jpg", mainRender);
+        compassNN.image = AL_loadTexture("images/worldStateSprites/north.jpg", mainRender);
+        
+        
+        SDL_RenderCopy(mainRender, compassNN.image, NULL, NULL);
+        scene = nnScene;
+        initialised = 1;
+    }
+
+    if(event->key.keysym.sym == SDLK_a){
+        if(scene == nnScene){
+            scene = nwScene;
+        } else if (scene == nwScene){
+            scene = neScene;
+        } else if (scene == neScene){
+            scene = nnScene;
+        }
+    } else if (event->key.keysym.sym == SDLK_d){
+        if(scene == nnScene){
+            scene = neScene;
+        } else if (scene == neScene){
+            scene = nwScene;
+        } else if (scene == nwScene){
+            scene = nnScene;
+        }
+    }
+    
+    SDL_RenderClear(mainRender);
+    if (scene == nnScene){
+        SDL_RenderCopy(mainRender, compassNN.image, NULL, NULL);
+    } else if (scene == neScene){
+        SDL_RenderCopy(mainRender, compassNE.image, NULL, NULL);
+    } else if (scene == nwScene){
+        SDL_RenderCopy(mainRender, compassNW.image, NULL, NULL);
+    }
+    
+    
+    if(event->key.keysym.sym == SDLK_RETURN){
+        if(scene == nnScene){
+            copyEncounter(encounter, encounterArray[0]);
+            if(encounter->ID != 4){
+                *StateOfGame = BEHAVIOUR_STATE;
+            } else {
+                printf("This was a weather.\n");
+            }
+        }
+        if(scene == nwScene){
+            copyEncounter(encounter, encounterArray[7]);
+            if(encounter->ID != 4){
+                *StateOfGame = BEHAVIOUR_STATE;
+            } else {
+                printf("This was a weather.\n");
+            }
+        }
+        if(scene == neScene){
+            copyEncounter(encounter, encounterArray[1]);
+            if(encounter->ID != 4){
+                *StateOfGame = BEHAVIOUR_STATE;
+            } else {
+                printf("This was a weather.\n");
+            }
+        }
+    }
+    AL_renderUIStats(mainRender);
     
 }

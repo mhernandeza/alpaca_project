@@ -209,7 +209,7 @@ void reverse(char *p)
 requires the test string, (string to be split) and string, array of strings*/
 void stringsplit (char *test, char string[100][100])
 {
-  int k = 0, x = 0, z = 0, y = 0;
+  int x = 0, z = 0, y = 0;
   while (test[x] != '\0') {
     string[y][z] = test[x];
     x++;

@@ -9,5 +9,5 @@
 
 bool AL_checkForQuit(SDL_Event event);
 SDL_Event AL_checkForPress(GameState StateOfGame);
-void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL_Event *event, double deltaTime, Encounter *encounter);
+void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL_Event *event, double deltaTime, Encounter *encounter, Encounter encounterArray[8]);
 #endif /* event_handler_h */

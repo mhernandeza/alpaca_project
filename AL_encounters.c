@@ -71,21 +71,27 @@ int generate_environment(Environment* surroundings){
 /* Below: Create small functions to send information from the struct to other modules, etc */
 
 /* this needs to take in a encounter pointer and fill it */
-void AL_getEncounter(Encounter *e){
-  int random_encounter,random_direction;
-  char tempstring[INFOTEXT];
+void AL_getEncounter(Encounter e[COMPASSPOINTS]){
+  int i,encounter1,encounter2,encounter3;
   Encounter* list;
   Environment* surroundings;
   list = (Encounter*)malloc(sizeof(Encounter)*TOTALENCOUNTERS);
   surroundings = (Environment*)malloc(sizeof(Environment)*COMPASSPOINTS);
   readfile(list);
   generate_environment(surroundings);
-  random_encounter = rand()%TOTALENCOUNTERS;
-  random_direction = rand()%COMPASSPOINTS;
-  list[random_encounter].locale = surroundings[random_direction];
-  strcpy(tempstring,list[random_encounter].locale.direction);
-  toupper(tempstring[0]);
-  copyencounter(e,&list[random_encounter]);
+    encounter1 = rand()%TOTALENCOUNTERS;
+    do{
+      encounter2 = rand()%TOTALENCOUNTERS;
+    }while(encounter2 == encounter1);
+    do{
+      encounter3 = rand()%TOTALENCOUNTERS;
+    }while((encounter3 == encounter2) || (encounter3 == encounter1));
+  copyencounter(&e[7],&list[encounter1]);
+  copyencounter(&e[0],&list[encounter2]);
+  copyencounter(&e[1],&list[encounter3]);
+  for(i=0;i<COMPASSPOINTS;i++){
+    e[i].locale = surroundings[i];
+  }
   free(list);
   free(surroundings);
 }
@@ -104,4 +110,6 @@ void copyencounter(Encounter* remote, Encounter* local){
   strcpy(remote->locale.direction,local->locale.direction);
   strcpy(remote->locale.weatherdescription,local->locale.weatherdescription);
   remote->locale.weatherseverity = local->locale.weatherseverity;
+  remote->oldTime = SDL_GetTicks();
+    remote->isFiring = 1;
 }

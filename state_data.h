@@ -36,7 +36,7 @@ struct playerShip {
 };
 typedef struct playerShip User;
 
-enum GameState { LOGO_STATE, MAIN_MENU, OPTIONS_MENU, PLAY_GAME, BEHAVIOUR_STATE, COMBAT_STATE, GAME_OVER};
+enum GameState { LOGO_STATE, MAIN_MENU, OPTIONS_MENU, PLAY_GAME, WORLD_STATE, BEHAVIOUR_STATE, COMBAT_STATE, WEATHER_STATE, GAME_OVER};
 typedef enum GameState GameState;
 
 void AL_initialisePlayerShip();

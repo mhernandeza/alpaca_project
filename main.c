@@ -14,10 +14,12 @@ int main(int argc, const char * argv[]) {
     AL_initImage();
     srand(time(NULL));
     
+
     
     AL_initializePlayer(&player);
     AL_presentStats(&player);
-    Encounter testEncounter;
+    Encounter encounterArray[8];
+    Encounter encounter;
     
     SDL_Event event;
     GameState StateOfGame = MAIN_MENU;
@@ -26,17 +28,9 @@ int main(int argc, const char * argv[]) {
     double deltaTime = 0;
    
     
-   /* //This can be removed----------------------
-    strcpy(testEncounter.name, "Test");
-    testEncounter.weapondamage = 1;
-    testEncounter.weaponnumber = 20;
-    testEncounter.crew = 60;
-    testEncounter.health = 100;
-    testEncounter.speed = 5;
-    testEncounter.oldTime = SDL_GetTicks();
-    //----------------------------------------- */
+    AL_getEncounter(encounterArray);
     
-    AL_getEncounter(&testEncounter);
+    
     
     AL_initialiseTTF();
     
@@ -47,8 +41,8 @@ int main(int argc, const char * argv[]) {
         
         
         event = AL_checkForPress(StateOfGame);
-        AL_callCorrectState(&StateOfGame, mainRenderer, &event, deltaTime, &testEncounter);
-
+        AL_callCorrectState(&StateOfGame, mainRenderer, &event, deltaTime, &encounter, encounterArray);
+        
         
         SDL_RenderPresent(mainRenderer);
     }

@@ -9,7 +9,8 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
     if (oldTime == 0){
         oldTime = SDL_GetTicks();
     }
-    if(oldTime + 2000 > SDL_GetTicks()){
+    if((oldTime + 5000) > SDL_GetTicks()){
+        //printf("This ran\n");
         return 1;
     }
     
@@ -36,11 +37,13 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
       healing = ((100-AL_getHealth(player))/10);
       printf("You sank the Enemy ship\nYour carpenter repaired the ship from %d to %d\n", AL_getHealth(player), AL_increaseHealth(player, healing));
       printf("You salvaged %d worth of gold from the wreck, you now have %d gold pieces\n", newloot,(AL_increaseGold(player, newloot)));
+      oldTime = 0;
       *StateOfGame = MAIN_MENU;
       return 1;
     }
     if(AL_getHealth(player) <= 0){
       printf("Your ship was sunk by the enemy ship\n");
+        oldTime = 0;
         *StateOfGame = GAME_OVER;
       return 0;
     }
@@ -51,9 +54,12 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
   }
     if (tickEnemy(player2)){
         Enemy_charge += ((float)player2->crew/(float)player2->weaponnumber)*100;
+        printf("Enemy Charge: %d\n", Enemy_charge);
+        player2->isFiring = AL_shoot_cannons(Enemy_charge);
         if ((player2->isFiring = (AL_shoot_cannons(Enemy_charge) == 1))){
+            printf("This is running\n");
             Enemy_charge = 0;
-            printf("The enemy takes a shot at you!\n");
+            printf("This ran\n");
             AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage, 1, player, player2));
         }
     }
@@ -65,17 +71,14 @@ int AL_shoot_cannons (int Player_charge)
 {
   int x;
   if (Player_charge >= 100){
-    printf("Ready to fire\n");
     x = rand() % 3;
     if (x == 0 ){
-      printf("\n               BANG!\n\n");
     }
     if (x == 1) {
-      printf("\n               WOOSH!\n\n");
     }
     if (x == 2) {
-      printf("\n                 KERPOW!\n\n");
     }
+      
     return 1;
   }
   return 0;
@@ -116,7 +119,6 @@ int retreat_condition (void)
 int tickPlayer (void)
 {
     if(player.oldTime + TURNTIME > SDL_GetTicks()){
-       // printf("This ran\n");
         return 0;
     }
     player.oldTime = SDL_GetTicks();
@@ -124,9 +126,11 @@ int tickPlayer (void)
 }
 int tickEnemy(Encounter *encounter){
     if(encounter->oldTime + ENEMY_TURN_TIME > SDL_GetTicks()){
+        
         return 0;
     }
     encounter->oldTime = SDL_GetTicks();
+    printf("This is running. 126\n");
     return 1;
 }
 

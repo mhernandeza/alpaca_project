@@ -8,7 +8,7 @@ bool AL_checkForQuit(SDL_Event event){
     return true;
 }
 
-void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL_Event *event, double deltaTime, Encounter *encounter){
+void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL_Event *event, double deltaTime, Encounter *encounter, Encounter encounterArray[8]){
     switch (*StateOfGame) {
         case MAIN_MENU:
             AL_LoadMainMenuState(mainRenderer, StateOfGame, event);
@@ -20,6 +20,7 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_LoadOptionState(mainRenderer, StateOfGame, event);
             break;
         case COMBAT_STATE:
+            
             AL_playCombat(&player, encounter, StateOfGame);
             AL_LoadCombatState(mainRenderer, StateOfGame, event, deltaTime, encounter);
             AL_renderUIStats(mainRenderer);
@@ -32,8 +33,16 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_LoadLogoState(mainRenderer, StateOfGame);
             break;
         case BEHAVIOUR_STATE:
+            printf("Crew: %d\n WeaponNum: %d\nWeaponDmg: %d\n", encounter->crew, encounter->weaponnumber, encounter->weapondamage);
             AL_LoadBehaviourState(mainRenderer, StateOfGame, event);
             AL_renderUIStats(mainRenderer);
+            break;
+        case WORLD_STATE:
+            
+            AL_LoadWorldState(mainRenderer, StateOfGame, event, encounter, encounterArray);
+            break;
+        case WEATHER_STATE:
+            //TODO create a load_weather state
             break;
         default:
             break;
@@ -80,7 +89,7 @@ SDL_Event AL_checkForPress(GameState StateOfGame){
             }
         }
     }
-    if (StateOfGame == BEHAVIOUR_STATE){
+    if (StateOfGame == BEHAVIOUR_STATE || StateOfGame == WORLD_STATE){
         while(SDL_PollEvent(&event) != 0){
             if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){

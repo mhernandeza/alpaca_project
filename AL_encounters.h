@@ -4,6 +4,7 @@
 # include <string.h>
 # include <time.h>
 # include <ctype.h>
+#include <SDL2/SDL.h>
 #define INFOTEXT 100
 
 #ifndef AL_ENCOUNTER_H

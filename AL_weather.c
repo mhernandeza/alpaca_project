@@ -1,11 +1,15 @@
 # include "AL_weather.h"
 
 void AL_weatherCombat(Encounter *enemy, GameState *StateOfGame){
-  static int stormDuration=10;
-  static int damage= enemy.Environment->weatherseverity;
-  int healthDamage;
+    static int oldTime = 0;
+    if (oldTime == 0){
+        oldTime = SDL_GetTicks();
+    }
+  int stormDuration= 20000 - player.speed*1000;
+  int damage = enemy->locale.weatherseverity;
+  int healthDamage = 0;
   int crewDamage=0;
-  if(stormDuration>0){
+  if(oldTime + stormDuration > SDL_GetTicks()){
     if(damage>25 && damage <50){
       healthDamage=rand()%5;
     }
@@ -13,12 +17,11 @@ void AL_weatherCombat(Encounter *enemy, GameState *StateOfGame){
       healthDamage=rand()%10;
     }
     if(damage>74){
-      healtDamage=rand()%20;
+      healthDamage=rand()%20;
       crewDamage=damage/(player.luck*10);
     }
     AL_decreaseHealth(&player, healthDamage);
     AL_decreaseCrew(&player, crewDamage);
-    stormDuration-=player.speed;
   }
   else{
     *StateOfGame=MAIN_MENU;

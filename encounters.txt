@@ -9,17 +9,6 @@ cannon
 100
 4
 
-1
-Machiavellia
-a sloop with tattered sails
-she
-cannon
-12
-2
-40
-50
-9
-
 2
 Flying Dutchman
 a floating train
@@ -40,4 +29,15 @@ tentacles
 100
 1
 5000
+0
+
+4
+Weather
+a life threatening storm
+it
+lightning
+1
+100
+1
+100
 0

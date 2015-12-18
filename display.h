@@ -39,5 +39,7 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
 void AL_LoadGameOverState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SDL_Event *event);
 void AL_LoadLogoState(SDL_Renderer *mainRenderer, GameState *StateOfGame);
 void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Event *event);
+void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Event *event, Encounter *encounter, Encounter encounterArray[8]);
+
 #endif /* display_h */
 
