@@ -1,4 +1,4 @@
-0
+1
 Queen Anne's Revenge
 a frigate with black sails
 she
@@ -31,7 +31,7 @@ railguns
 200
 2
 
-3
+0
 Kraken
 a horrifying, undulating eldritch abomination
 it

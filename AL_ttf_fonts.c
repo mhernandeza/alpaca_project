@@ -52,6 +52,8 @@ void AL_renderFont(SDL_Renderer *mainRenderer, SDL_Color color, TTF_Font *fontFi
     destination.w = w;
     
     SDL_RenderCopy(mainRenderer, font, NULL, &destination);
+    
+    SDL_DestroyTexture(font);
 }
 
 void AL_renderUIStats(SDL_Renderer *mainRender){

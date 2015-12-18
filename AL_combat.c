@@ -5,6 +5,14 @@ int AL_critical_Damage  (User *player, Encounter *player2, int attacker);
 int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
 {
   static int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0;
+    static int oldTime = 0;
+    if (oldTime == 0){
+        oldTime = SDL_GetTicks();
+    }
+    if(oldTime + 2000 > SDL_GetTicks()){
+        return 1;
+    }
+    
     if (tickPlayer() == 1){
       if ((AL_getRetreatHealth(player) > AL_getHealth(player) )/*||
       ((AL_getRetreatWeapons(player) == 1)  &&
@@ -126,7 +134,7 @@ int AL_critical_Damage  (User *player, Encounter *player2, int attacker)
 {
   int y;
   y = rand() % 6;
-  if (player2->ID == 3) {
+  if (player2->ID == 0) {
     //the Kracken exception to critical hits
     player2->health -= 5;
     printf("The cannon ball hits the kracken's eye!");

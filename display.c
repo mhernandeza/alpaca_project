@@ -238,7 +238,7 @@ void AL_LoadPlayGameState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SD
 }
 
 void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_Event *event, double deltaTime, Encounter *encounter){
-    static AL_Sprite storm;
+    static AL_Sprite background;
     static AL_Sprite playerShip;
     static AL_Sprite enemyShip;
     static AL_Sprite cannonSprite;
@@ -247,8 +247,9 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
     static int intialised = 0;
     
     if(intialised == 0){
-        storm.image = AL_loadTexture("images/mockCombatSprites/storm.jpg", mainRenderer);
-        AL_setSpriteSheetData(&storm, 200, 9, 3);
+       // storm.image = AL_loadTexture("images/mockCombatSprites/storm.jpg", mainRenderer);
+       // AL_setSpriteSheetData(&storm, 200, 9, 3);
+        background.image = AL_loadTexture("images/mockCombatSprites/combatBackground.jpg", mainRenderer);
 
         playerShip.image = AL_loadTexture("images/mockCombatSprites/playerShip.png", mainRenderer);
         AL_setSpriteSheetData(&playerShip, 150, 9, 1);
@@ -278,12 +279,11 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
     }
     
     AL_getNextFrame(&playerShip);
-    AL_getNextFrame(&storm);
     AL_getNextFrame(&enemyShip);
    
     
     SDL_RenderClear(mainRenderer);
-    SDL_RenderCopy(mainRenderer, storm.image, &storm.source, NULL);
+    SDL_RenderCopy(mainRenderer, background.image, NULL, NULL);
     
     
     playEnemyFireAnimation(mainRenderer, &cannonSpriteEnemy, encounter);
@@ -294,11 +294,11 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
     
     if (event->key.keysym.sym == SDLK_BACKSPACE){
         *StateofGame = MAIN_MENU;
-        SDL_DestroyTexture(storm.image);
+        SDL_DestroyTexture(background.image);
         SDL_DestroyTexture(playerShip.image);
         SDL_DestroyTexture(enemyShip.image);
         SDL_DestroyTexture(cannonSprite.image);
-        storm.image = NULL; playerShip.image = NULL;
+        background.image = NULL; playerShip.image = NULL;
         enemyShip.image = NULL; cannonSprite.image = NULL;
         intialised = 0;
     } else if (event->key.keysym.sym == SDLK_w){
@@ -398,6 +398,7 @@ void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL
         AL_setSpriteSizeAndLocation(&numbers, 500, 500, 50, 50);
         
         SDL_RenderCopy(mainRender, behaviourYes.image, NULL, NULL);
+        scene = yesScene;
         initialised = 1;
     }
     
@@ -446,6 +447,7 @@ void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL
             SDL_DestroyTexture(behaviourNum.image);
             SDL_DestroyTexture(numbers.image);
             player.retreatHealth = 0;
+            initialised = 0;
             *StateOfGame = COMBAT_STATE;
         }
         if (scene == numScene){
