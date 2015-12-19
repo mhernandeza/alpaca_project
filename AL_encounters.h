@@ -4,8 +4,11 @@
 # include <string.h>
 # include <time.h>
 # include <ctype.h>
-#include <SDL2/SDL.h>
+# include <SDL2/SDL.h>
+# include "AL_ttf_fonts.h"
+
 #define INFOTEXT 100
+#define LONGINFO 300
 
 #ifndef AL_ENCOUNTER_H
 #define AL_ENCOUNTER_H
@@ -31,6 +34,7 @@ struct encounter{
   int speed;
   int oldTime;
   int isFiring;
+  char longdescription[LONGINFO];
   Environment locale;
 };
 

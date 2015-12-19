@@ -7,6 +7,7 @@ int readfile(Encounter* list);
 void read_in_string(char s[],FILE *fp);
 int generate_environment(Environment* surroundings);
 void copyencounter(Encounter* remote, Encounter* local);
+void create_description(Encounter* remote, Encounter* local);
 
 int readfile(Encounter* list){
   int i;
@@ -111,5 +112,25 @@ void copyencounter(Encounter* remote, Encounter* local){
   strcpy(remote->locale.weatherdescription,local->locale.weatherdescription);
   remote->locale.weatherseverity = local->locale.weatherseverity;
   remote->oldTime = SDL_GetTicks();
-    remote->isFiring = 1;
+  create_description(remote,local);
+  remote->isFiring = 1;
+}
+
+void create_description(Encounter* remote, Encounter* local){
+  static char tempstring[LONGINFO];
+  static char numberstring[10];
+  strcpy(tempstring,"You see ");
+  strcat(tempstring,local->description);
+  strcat(tempstring," on the horizon; ");
+  strcat(tempstring,local->pronoun);
+  strcat(tempstring," is armed with ");
+  strcat(tempstring,itoa(local->weaponnumber,numberstring,10));
+  strcat(tempstring," ");
+  strcat(tempstring,local->weapontype);
+  strcat(tempstring,". The weather to the ");
+  strcat(tempstring,local->locale.direction);
+  strcat(tempstring," looks ");
+  strcat(tempstring,local->locale.weatherdescription);
+  strcat(tempstring,".");
+  strcpy(remote->longdescription,tempstring);
 }
