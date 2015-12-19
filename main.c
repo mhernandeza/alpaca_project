@@ -26,10 +26,9 @@ int main(int argc, const char * argv[]) {
     int prevTime = 0;
     int currentTime = 0;
     double deltaTime = 0;
-   
+    static int gettingEncounter = 1;
     
     AL_getEncounter(encounterArray);
-    
     
     
     AL_initialiseTTF();
@@ -38,6 +37,17 @@ int main(int argc, const char * argv[]) {
         prevTime = currentTime;
         currentTime = SDL_GetTicks();
         deltaTime = (currentTime - prevTime)/1000.0;
+        
+        
+        if(gettingEncounter == 1 && StateOfGame == WORLD_STATE){
+            AL_getEncounter(encounterArray);
+            gettingEncounter = 0;
+        }
+        
+        if(StateOfGame == COMBAT_STATE){
+            gettingEncounter = 1;
+        }
+        
         
         
         event = AL_checkForPress(StateOfGame);

@@ -5,6 +5,7 @@ int AL_critical_Damage  (User *player, Encounter *player2, int attacker);
 int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
 {
   static int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0;
+    
     static int oldTime = 0;
     if (oldTime == 0){
         oldTime = SDL_GetTicks();
@@ -28,8 +29,6 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
     }
       if ((player->isFiring = (AL_shoot_cannons(Player_charge) == 1))){
         Player_charge = 0;
-        printf("You take a shot at the enemy!\n");
-        player2->health -= AL_damageHandle(AL_getWeaponNumber(player), AL_getWeaponDamage(player), 2, player, player2);
       }
 
     if (player2->health <= 0){
@@ -38,11 +37,10 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
       printf("You sank the Enemy ship\nYour carpenter repaired the ship from %d to %d\n", AL_getHealth(player), AL_increaseHealth(player, healing));
       printf("You salvaged %d worth of gold from the wreck, you now have %d gold pieces\n", newloot,(AL_increaseGold(player, newloot)));
       oldTime = 0;
-      *StateOfGame = MAIN_MENU;
+      *StateOfGame = WORLD_STATE;
       return 1;
     }
     if(AL_getHealth(player) <= 0){
-      printf("Your ship was sunk by the enemy ship\n");
         oldTime = 0;
         *StateOfGame = GAME_OVER;
       return 0;
@@ -54,13 +52,9 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
   }
     if (tickEnemy(player2)){
         Enemy_charge += ((float)player2->crew/(float)player2->weaponnumber)*100;
-        printf("Enemy Charge: %d\n", Enemy_charge);
         player2->isFiring = AL_shoot_cannons(Enemy_charge);
         if ((player2->isFiring = (AL_shoot_cannons(Enemy_charge) == 1))){
-            printf("This is running\n");
             Enemy_charge = 0;
-            printf("This ran\n");
-            AL_decreaseHealth(player, AL_damageHandle(player2->weaponnumber, player2->weapondamage, 1, player, player2));
         }
     }
 
@@ -142,9 +136,11 @@ int AL_critical_Damage  (User *player, Encounter *player2, int attacker)
     //the Kracken exception to critical hits
     player2->health -= 5;
     printf("The cannon ball hits the kracken's eye!");
-  }
+  } else {
+      
+  
   printf("The shot was super effective! ");
-  if (y <= 1 ){
+   if (y <= 1 ){
     printf("It did aditional damage\n");
     if (attacker == 1) {
       player2->health -= 1;
@@ -174,7 +170,7 @@ int AL_critical_Damage  (User *player, Encounter *player2, int attacker)
       AL_decreaseCrew(player, 1);
     }
   }
-  return 0;
+  }return 0;
 }
 
 int AL_collectLoot(User *player, Encounter *player2){

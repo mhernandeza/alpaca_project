@@ -207,7 +207,7 @@ void reverse(char *p)
 
 /*splits string onto miultiple lines to prevent overflow of text boxes
 requires the test string, (string to be split) and string, array of strings*/
-void stringsplit (char *test, char string[100][100])
+void stringsplit (char *test, char string[4][60])
 {
   int x = 0, z = 0, y = 0;
   while (test[x] != '\0') {
@@ -215,10 +215,35 @@ void stringsplit (char *test, char string[100][100])
     x++;
     z++;
     if (z >= 50 && test[x] == ' '){
-      x++;
-      y++;
-      z = 0;
+        string[y][z] = '\0';
+        
+        y++;
+        z = 0;
     }
   }
+    string[y][z] = '\0';
+    string[y+1][0] = ' ';
+    string[y+1][1] = '\0';
   return;
+}
+
+void AL_renderInfo(char *str, SDL_Renderer *mainRenderer){
+    SDL_Color color = {0, 0, 0, 0};
+    char stringArray[4][60];
+    TTF_Font *fontFile;
+    int x = 250, y = 570;
+    
+    stringsplit(str, stringArray);
+    
+    AL_openFontFile(&fontFile, FONT_NAME_2, 25);
+
+    int i;
+    AL_renderFont(mainRenderer, color, fontFile, x + 12, y + i * 30, stringArray[0]);
+
+    for (i = 1; i < 3; i++){
+        AL_renderFont(mainRenderer, color, fontFile, x, y + i * 30, stringArray[i]);
+    }
+    
+    TTF_CloseFont(fontFile);
+    
 }

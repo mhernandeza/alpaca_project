@@ -20,11 +20,13 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_LoadOptionState(mainRenderer, StateOfGame, event);
             break;
         case COMBAT_STATE:
-            
             AL_playCombat(&player, encounter, StateOfGame);
             AL_LoadCombatState(mainRenderer, StateOfGame, event, deltaTime, encounter);
             AL_renderUIStats(mainRenderer);
             AL_renderEnemyStats(mainRenderer, encounter);
+            if(player.health <= player.retreatHealth){
+                AL_LoadRetreatScene(deltaTime, mainRenderer, StateOfGame);
+            }
             break;
         case GAME_OVER:
             AL_LoadGameOverState(mainRenderer, StateOfGame, event);
@@ -38,7 +40,6 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_renderUIStats(mainRenderer);
             break;
         case WORLD_STATE:
-            
             AL_LoadWorldState(mainRenderer, StateOfGame, event, encounter, encounterArray);
             break;
         case WEATHER_STATE:

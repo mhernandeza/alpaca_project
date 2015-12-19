@@ -15,3 +15,4 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame);
 int AL_GhostShip (User *player,Encounter *player2);
 int AL_surrender (User *player,Encounter *player2);
 int AL_critical_Damage  (User *player, Encounter *player2, int attacker);
+int AL_damageHandle (int WeaponNum, int weapondamage, int defender, User *player1, Encounter *player2);

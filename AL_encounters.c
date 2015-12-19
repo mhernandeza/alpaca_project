@@ -87,12 +87,14 @@ void AL_getEncounter(Encounter e[COMPASSPOINTS]){
     do{
       encounter3 = rand()%TOTALENCOUNTERS;
     }while((encounter3 == encounter2) || (encounter3 == encounter1));
+  for(i=0;i<COMPASSPOINTS;i++){
+    strcpy(e[i].locale.direction,surroundings[i].direction);
+    strcpy(e[i].locale.weatherdescription,surroundings[i].weatherdescription);
+    e[i].locale.weatherseverity = surroundings[i].weatherseverity;
+  }
   copyencounter(&e[7],&list[encounter1]);
   copyencounter(&e[0],&list[encounter2]);
   copyencounter(&e[1],&list[encounter3]);
-  for(i=0;i<COMPASSPOINTS;i++){
-    e[i].locale = surroundings[i];
-  }
   free(list);
   free(surroundings);
 }
@@ -108,9 +110,11 @@ void copyencounter(Encounter* remote, Encounter* local){
   remote->crew = local->crew;
   remote->health = local->health;
   remote->speed = local->speed;
+    /*
   strcpy(remote->locale.direction,local->locale.direction);
   strcpy(remote->locale.weatherdescription,local->locale.weatherdescription);
   remote->locale.weatherseverity = local->locale.weatherseverity;
+     */
   remote->oldTime = SDL_GetTicks();
   create_description(remote,local);
   remote->isFiring = 1;
@@ -128,9 +132,10 @@ void create_description(Encounter* remote, Encounter* local){
   strcat(tempstring," ");
   strcat(tempstring,local->weapontype);
   strcat(tempstring,". The weather to the ");
-  strcat(tempstring,local->locale.direction);
+    printf("%s\n", remote->locale.direction);
+  strcat(tempstring,remote->locale.direction);
   strcat(tempstring," looks ");
-  strcat(tempstring,local->locale.weatherdescription);
+  strcat(tempstring,remote->locale.weatherdescription);
   strcat(tempstring,".");
   strcpy(remote->longdescription,tempstring);
 }

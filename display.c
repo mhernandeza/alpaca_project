@@ -4,9 +4,8 @@
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
-void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite);
-void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter);
-void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite);
+
+void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter);
 void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter);
 
 //Call this function to initialise the SDL_Window and renderer. It takes pointers to the pointers of the window
@@ -111,12 +110,13 @@ void AL_setSpriteSizeAndLocation(AL_Sprite *spriteSheet, int xLocation, int yLoc
 }
 
 
-void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite){
+void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter){
     if(player.isFiring){
         AL_getNextFrame(cannonSprite);
         SDL_RenderCopy(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination);
         if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
             player.isFiring = false;
+            encounter->health -= AL_damageHandle(encounter->weaponnumber, encounter->weapondamage, 1, &player, encounter);
         }
     }
 }
@@ -127,6 +127,7 @@ void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite,
         SDL_RenderCopyEx(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination, 0.0, NULL, true);
         if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
             encounter->isFiring = false;
+            player.health -= AL_damageHandle(AL_getWeaponNumber(&player), AL_getWeaponDamage(&player), 2, &player, encounter);
         }
     }
 }
@@ -147,6 +148,7 @@ void copyEncounter(Encounter *encounter, Encounter encounterFromArr){
     strcpy(encounter->name, encounterFromArr.name);
     strcpy(encounter->locale.direction, encounterFromArr.locale.direction);
     strcpy(encounter->locale.weatherdescription, encounterFromArr.locale.weatherdescription);
+    strcpy(encounter->longdescription, encounterFromArr.longdescription);
 }
 
 
@@ -279,6 +281,7 @@ void AL_LoadPlayGameState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SD
             playerShip.destination.x -= speed*deltaTime;
         }
     }
+    
 }
 
 void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_Event *event, double deltaTime, Encounter *encounter){
@@ -289,7 +292,8 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
     static AL_Sprite cannonSpriteEnemy;
     static AL_Sprite HUD;
     static int intialised = 0;
-    //TODO Fix comments
+
+    
     if(intialised == 0){
        // storm.image = AL_loadTexture("images/mockCombatSprites/storm.jpg", mainRenderer);
        // AL_setSpriteSheetData(&storm, 200, 9, 3);
@@ -298,29 +302,28 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
         playerShip.image = AL_loadTexture("images/mockCombatSprites/playerShip.png", mainRenderer);
         AL_setSpriteSheetData(&playerShip, 150, 9, 1);
         AL_setSpriteSizeAndLocation(&playerShip, 200, 280, 250, 250);
-       // if(encounter->ID){
+        if(encounter->ID == 0){
             enemyShip.image = AL_loadTexture("images/mockCombatSprites/krakenBody2.png", mainRenderer);
             AL_setSpriteSheetData(&enemyShip, 120, 5, 1);
             AL_setSpriteSizeAndLocation(&enemyShip, 760, 270, 350, 250);
-       // } else {
-        //    enemyShip.image = AL_loadTexture("images/mockCombatSprites/enemyShip.png", mainRenderer);
-        //    AL_setSpriteSheetData(&enemyShip, 120, 10, 1);
-        //    AL_setSpriteSizeAndLocation(&enemyShip, 760, 270, 250, 250);
-       // }
+            
+            cannonSpriteEnemy.image = AL_loadTexture("images/mockCombatSprites/attack.png", mainRenderer);
+            AL_setSpriteSheetData(&cannonSpriteEnemy, 90, 10, 19);
+            AL_setSpriteSizeAndLocation(&cannonSpriteEnemy, 140, 370,180, 180);
+        } else {
+            enemyShip.image = AL_loadTexture("images/mockCombatSprites/blackShip.png", mainRenderer);
+            AL_setSpriteSheetData(&enemyShip, 120, 10, 1);
+            AL_setSpriteSizeAndLocation(&enemyShip, 760, 270, 250, 250);
+            
+            cannonSpriteEnemy.image = AL_loadTexture("images/mockCombatSprites/cannon6.png", mainRenderer);
+            AL_setSpriteSheetData(&cannonSpriteEnemy, 40, 2, 35);
+            AL_setSpriteSizeAndLocation(&cannonSpriteEnemy, 300, 260, 600, 300);
+        }
         
         cannonSprite.image = AL_loadTexture("images/mockCombatSprites/cannon6.png", mainRenderer);
         AL_setSpriteSheetData(&cannonSprite, 40, 2, 35);
         AL_setSpriteSizeAndLocation(&cannonSprite, 300, 260, 600, 300);
-       
-        cannonSpriteEnemy.image = AL_loadTexture("images/mockCombatSprites/attack.png", mainRenderer);
-        AL_setSpriteSheetData(&cannonSpriteEnemy, 90, 10, 19);
-        AL_setSpriteSizeAndLocation(&cannonSpriteEnemy, 140, 370,180, 180);
-        
-        
-        //cannonSpriteEnemy.image = AL_loadTexture("images/mockCombatSprites/cannon6.png", mainRenderer);
-        //AL_setSpriteSheetData(&cannonSpriteEnemy, 40, 2, 35);
-        //AL_setSpriteSizeAndLocation(&cannonSpriteEnemy, 300, 260, 600, 300);
-        
+  
         HUD.image = AL_loadTexture("images/mockCombatSprites/HUD2.png", mainRenderer);
         intialised = 1;
     }
@@ -333,7 +336,7 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
     
     playEnemyFireAnimation(mainRenderer, &cannonSpriteEnemy, encounter);
     SDL_RenderCopy(mainRenderer, enemyShip.image, &enemyShip.source, &enemyShip.destination);
-    playFireCannonAnimation(mainRenderer, &cannonSprite);
+    playFireCannonAnimation(mainRenderer, &cannonSprite, encounter);
     SDL_RenderCopy(mainRenderer, playerShip.image, &playerShip.source, &playerShip.destination);
     SDL_RenderCopy(mainRenderer, HUD.image, NULL, NULL);
     
@@ -522,10 +525,15 @@ void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Eve
     SDL_RenderClear(mainRender);
     if (scene == nnScene){
         SDL_RenderCopy(mainRender, compassNN.image, NULL, NULL);
+        AL_renderInfo(encounterArray[0].longdescription, mainRender);
     } else if (scene == neScene){
         SDL_RenderCopy(mainRender, compassNE.image, NULL, NULL);
+        AL_renderInfo(encounterArray[1].longdescription, mainRender);
+
     } else if (scene == nwScene){
         SDL_RenderCopy(mainRender, compassNW.image, NULL, NULL);
+        AL_renderInfo(encounterArray[7].longdescription, mainRender);
+
     }
     
     
@@ -534,6 +542,7 @@ void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Eve
             copyEncounter(encounter, encounterArray[0]);
             if(encounter->ID != 4){
                 *StateOfGame = BEHAVIOUR_STATE;
+                
             } else {
                 printf("This was a weather.\n");
             }
@@ -558,3 +567,19 @@ void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Eve
     AL_renderUIStats(mainRender);
     
 }
+
+void AL_LoadRetreatScene(double deltaTime, SDL_Renderer *mainRenderer, GameState *StateOfGame){
+    SDL_Texture *retreat = AL_loadTexture("images/retreating.png", mainRenderer);
+    static double oldTime = 0;
+    SDL_RenderCopy(mainRenderer, retreat, NULL, NULL);
+    printf("%f\n", oldTime);
+    if (oldTime > 5){
+        SDL_DestroyTexture(retreat);
+        *StateOfGame = WORLD_STATE;
+    } else {
+        oldTime += deltaTime;
+    }
+    
+    SDL_DestroyTexture(retreat);
+}
+

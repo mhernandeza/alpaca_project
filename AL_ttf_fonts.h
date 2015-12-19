@@ -8,6 +8,8 @@
 #define FONT_NAME "fonts/Primitive.ttf"
 #define FONT_NAME_2 "fonts/PixelMusketeer.ttf"
 
+#define TEST_FONT "This is a test sentence to prove the theory works well, and that lee is a genius of note. I probably mispelt misplet"
+
 SDL_Texture* AL_renderText(const char * message, TTF_Font *fontFile, SDL_Color color, SDL_Renderer *renderer);
 int AL_openFontFile (TTF_Font **fontFile, const char *fontFileName, int fontSize);
 int AL_initialiseTTF();
@@ -17,5 +19,6 @@ char* itoa(int num, char* str, int base);
 void AL_renderEnemyStats(SDL_Renderer *mainRenderer, Encounter *encounter);
 void AL_renderNumbers(SDL_Renderer *mainRender, int value);
 void AL_renderDescription(SDL_Renderer *mainRenderer, char *stringToRender);
-void stringsplit (char *test, char string[100][100]);
+void stringsplit (char *test, char string[4][60]);
+void AL_renderInfo(char *str, SDL_Renderer *mainRenderer);
 #endif
