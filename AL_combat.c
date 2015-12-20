@@ -16,8 +16,8 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
     }
 
     if (tickPlayer() == 1){
-      AL_surrender (player, player2)
-      AL_GhostShip (player, player2)
+        AL_surrender (player, player2, StateOfGame);
+        AL_GhostShip (player, player2, StateOfGame);
       if ((AL_getRetreatHealth(player) > AL_getHealth(player) )) {
       retreat_Counter++;
       printf("%d turns till escape\n", 3 - retreat_Counter);
@@ -185,9 +185,9 @@ int AL_collectLoot(User *player, Encounter *player2){
 }
 
 
-int AL_surrender (User *player, Encounter *player2)
+int AL_surrender (User *player, Encounter *player2, GameState *StateOfGame)
 {
-  int surrender;
+  //int surrender;
   if (player2->weaponnumber == 0 ) {
     printf("The enemy is defenseless, you accept their surrender.\n");
     printf("They give you a token of their appreciation\n");
@@ -198,7 +198,7 @@ int AL_surrender (User *player, Encounter *player2)
   return 0;
 }
 
-int AL_GhostShip (User *player, Encounter *player2)
+int AL_GhostShip (User *player, Encounter *player2, GameState *StateOfGame)
 {
   if (player2->crew <= 0 ){
     printf("The enemy ship is a ghost ship? We collect what is left.\n");
