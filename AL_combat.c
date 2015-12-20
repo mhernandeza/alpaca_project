@@ -50,7 +50,7 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
       return 1;
     }
   }
-    if (tickEnemy(player2)){
+    if (tickEnemy(player2) && player2->weaponnumber != 0 ){
         Enemy_charge += ((float)player2->crew/(float)player2->weaponnumber)*100;
         player2->isFiring = AL_shoot_cannons(Enemy_charge);
         if ((player2->isFiring = (AL_shoot_cannons(Enemy_charge) == 1))){
@@ -178,6 +178,9 @@ int AL_collectLoot(User *player, Encounter *player2){
     newloot = 100 + rand()%(player2->weaponnumber + 1);
     healing = ((100 - AL_getHealth(player))/10);
     newcrew = rand()%(player2->crew/10);
+    AL_increaseHealth(player, healing);
+    AL_increaseCrew(player, newcrew);
+    AL_increaseGold(player, newloot);
     if(newcrew > 0){
 
     }
@@ -192,7 +195,6 @@ int AL_surrender (User *player, Encounter *player2, GameState *StateOfGame)
     printf("The enemy is defenseless, you accept their surrender.\n");
     printf("They give you a token of their appreciation\n");
     AL_collectLoot(player, player2);
-    *StateOfGame = WORLD_STATE;
     return 1;
     }
   return 0;
@@ -203,7 +205,6 @@ int AL_GhostShip (User *player, Encounter *player2, GameState *StateOfGame)
   if (player2->crew <= 0 ){
     printf("The enemy ship is a ghost ship? We collect what is left.\n");
     AL_collectLoot(player, player2);
-    *StateOfGame = WORLD_STATE;
     return 1;
   }
   return 0;
