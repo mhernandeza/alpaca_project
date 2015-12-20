@@ -41,5 +41,8 @@ void AL_LoadLogoState(SDL_Renderer *mainRenderer, GameState *StateOfGame);
 void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Event *event);
 void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Event *event, Encounter *encounter, Encounter encounterArray[8]);
 void AL_LoadRetreatScene(double deltaTime, SDL_Renderer *mainRenderer, GameState *StateOfGame);
+
+void AL_LoadWeatherState(double deltaTime, SDL_Renderer *mainRenderer, GameState *StateOfGame, Encounter *encounter);
+void AL_LoadSurrenderScene(double deltaTime, SDL_Renderer *mainRenderer, GameState *StateOfGame);
 #endif /* display_h */
 

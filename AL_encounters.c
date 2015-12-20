@@ -14,7 +14,7 @@ int readfile(Encounter* list){
   FILE *fp;
   fp = fopen("encounters.txt","r");
   if(fp == NULL){
-    printf("ERROR: encounters.txt not found\n");
+    fprintf(stderr, "ERROR: encounters.txt not found\n");
     exit(1);
   }
   for(i=0;i<TOTALENCOUNTERS;i++){
@@ -132,7 +132,6 @@ void create_description(Encounter* remote, Encounter* local){
   strcat(tempstring," ");
   strcat(tempstring,local->weapontype);
   strcat(tempstring,". The weather to the ");
-    printf("%s\n", remote->locale.direction);
   strcat(tempstring,remote->locale.direction);
   strcat(tempstring," looks ");
   strcat(tempstring,remote->locale.weatherdescription);

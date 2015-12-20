@@ -26,6 +26,8 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_renderEnemyStats(mainRenderer, encounter);
             if(player.health <= player.retreatHealth){
                 AL_LoadRetreatScene(deltaTime, mainRenderer, StateOfGame);
+            } else if (encounter->weaponnumber <= 0){
+                AL_LoadSurrenderScene(deltaTime, mainRenderer, StateOfGame);
             }
             break;
         case GAME_OVER:
@@ -35,7 +37,6 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_LoadLogoState(mainRenderer, StateOfGame);
             break;
         case BEHAVIOUR_STATE:
-            printf("Crew: %d\n WeaponNum: %d\nWeaponDmg: %d\n", encounter->crew, encounter->weaponnumber, encounter->weapondamage);
             AL_LoadBehaviourState(mainRenderer, StateOfGame, event);
             AL_renderUIStats(mainRenderer);
             break;
@@ -43,7 +44,8 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_LoadWorldState(mainRenderer, StateOfGame, event, encounter, encounterArray);
             break;
         case WEATHER_STATE:
-            //TODO create a load_weather state
+            AL_LoadWeatherState(deltaTime, mainRenderer, StateOfGame, encounter);
+            AL_renderUIStats(mainRenderer);
             break;
         default:
             break;

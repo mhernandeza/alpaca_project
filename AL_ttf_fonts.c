@@ -4,7 +4,10 @@ char* itoa(int num, char* str, int base);
 void reverse(char str[]);
 
 SDL_Texture* AL_renderText(const char * message, TTF_Font *fontFile, SDL_Color color, SDL_Renderer *renderer) {
-
+    if(fontFile == NULL){
+        fontFile = TTF_OpenFont(FONT_NAME_2, 60);
+    }
+    
     SDL_Surface *surf = TTF_RenderText_Blended(fontFile, message, color);
     if (surf == NULL){
         TTF_CloseFont(fontFile);

@@ -1,9 +1,9 @@
 1
 Queen Anne's Revenge
-a frigate with black sails
+a frigate with white sails
 she
 cannon
-26
+15
 1
 60
 100

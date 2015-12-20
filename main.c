@@ -17,7 +17,6 @@ int main(int argc, const char * argv[]) {
 
     
     AL_initializePlayer(&player);
-    AL_presentStats(&player);
     Encounter encounterArray[8];
     Encounter encounter;
     
@@ -44,7 +43,7 @@ int main(int argc, const char * argv[]) {
             gettingEncounter = 0;
         }
         
-        if(StateOfGame == COMBAT_STATE){
+        if(StateOfGame == COMBAT_STATE || StateOfGame == WEATHER_STATE){
             gettingEncounter = 1;
         }
         
