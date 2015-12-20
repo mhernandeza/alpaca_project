@@ -5,7 +5,7 @@ int AL_critical_Damage  (User *player, Encounter *player2, int attacker);
 int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
 {
   static int Player_charge = 0, Enemy_charge = 0, retreat_Counter = 0, newloot = 0, healing = 0;
-    
+
     static int oldTime = 0;
     if (oldTime == 0){
         oldTime = SDL_GetTicks();
@@ -14,11 +14,11 @@ int AL_playCombat(User *player, Encounter *player2, GameState *StateOfGame)
         //printf("This ran\n");
         return 1;
     }
-    
+
     if (tickPlayer() == 1){
-      if ((AL_getRetreatHealth(player) > AL_getHealth(player) )/*||
-      ((AL_getRetreatWeapons(player) == 1)  &&
-      (AL_getEnemyRetreatWeapon(player2) > AL_getWeaponNumber(player)))*/) {
+      AL_surrender (player, player2)
+      AL_GhostShip (player, player2)
+      if ((AL_getRetreatHealth(player) > AL_getHealth(player) )) {
       retreat_Counter++;
       printf("%d turns till escape\n", 3 - retreat_Counter);
       }
@@ -72,7 +72,7 @@ int AL_shoot_cannons (int Player_charge)
     }
     if (x == 2) {
     }
-      
+
     return 1;
   }
   return 0;
@@ -120,7 +120,7 @@ int tickPlayer (void)
 }
 int tickEnemy(Encounter *encounter){
     if(encounter->oldTime + ENEMY_TURN_TIME > SDL_GetTicks()){
-        
+
         return 0;
     }
     encounter->oldTime = SDL_GetTicks();
@@ -137,8 +137,8 @@ int AL_critical_Damage  (User *player, Encounter *player2, int attacker)
     player2->health -= 5;
     printf("The cannon ball hits the kracken's eye!");
   } else {
-      
-  
+
+
   printf("The shot was super effective! ");
    if (y <= 1 ){
     printf("It did aditional damage\n");
@@ -179,38 +179,31 @@ int AL_collectLoot(User *player, Encounter *player2){
     healing = ((100 - AL_getHealth(player))/10);
     newcrew = rand()%(player2->crew/10);
     if(newcrew > 0){
-        
+
     }
     return 1;
 }
 
 
-int AL_surrender (User *player,Encounter *player2)
+int AL_surrender (User *player, Encounter *player2)
 {
   int surrender;
   if (player2->weaponnumber == 0 ) {
-    printf("The enemy is defenseless, do you accept their surrender?\n1: Yes\n2: No\n");
-    if (scanf("%d", &surrender) == 1) {
-      if (surrender == 1) {
-        printf("They give you a token of their appreciation\n");
-        AL_collectLoot(player, player2);
-        return 1;
-      }
+    printf("The enemy is defenseless, you accept their surrender.\n");
+    printf("They give you a token of their appreciation\n");
+    AL_collectLoot(player, player2);
+    *StateOfGame = WORLD_STATE;
+    return 1;
     }
-    else {
-      printf("Send them to a watery grave");
-      AL_collectLoot (player, player2);
-      return 1;
-    }
-  }
   return 0;
 }
 
 int AL_GhostShip (User *player, Encounter *player2)
 {
   if (player2->crew <= 0 ){
-    printf("The enemy ship is a ghost ship? We collect what is left");
+    printf("The enemy ship is a ghost ship? We collect what is left.\n");
     AL_collectLoot(player, player2);
+    *StateOfGame = WORLD_STATE;
     return 1;
   }
   return 0;
