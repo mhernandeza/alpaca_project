@@ -6,6 +6,7 @@
 #include "AL_combat.h"
 #include "AL_ttf_fonts.h"
 #include "AL_encounters.h"
+#include "AL_weather.h"
 
 bool AL_checkForQuit(SDL_Event event);
 SDL_Event AL_checkForPress(GameState StateOfGame);

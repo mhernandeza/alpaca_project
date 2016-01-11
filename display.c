@@ -116,7 +116,8 @@ void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite
         SDL_RenderCopy(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination);
         if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
             player.isFiring = false;
-            encounter->health -= AL_damageHandle(encounter->weaponnumber, encounter->weapondamage, 1, &player, encounter);
+            encounter->health -= AL_damageHandle(player.weaponNumber, player.weaponDamage);
+            encounter->weaponnumber -= AL_criticalDamageHandle(player.weaponNumber, player.weaponDamage);
         }
     }
 }
@@ -127,7 +128,8 @@ void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite,
         SDL_RenderCopyEx(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination, 0.0, NULL, true);
         if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
             encounter->isFiring = false;
-            player.health -= AL_damageHandle(AL_getWeaponNumber(&player), AL_getWeaponDamage(&player), 2, &player, encounter);
+            player.health -= AL_damageHandle(encounter->weaponnumber, encounter->weapondamage);
+            player.weaponNumber -= AL_criticalDamageHandle(encounter->weaponnumber, encounter->weapondamage);
         }
     }
 }
@@ -671,21 +673,45 @@ void AL_LoadRetreatScene(double deltaTime, SDL_Renderer *mainRenderer, GameState
 
 void AL_LoadSurrenderScene(double deltaTime, SDL_Renderer *mainRenderer, GameState *StateOfGame){
     SDL_Texture *retreat = AL_loadTexture("images/enemySurrender.png", mainRenderer);
-    static double oldTime = 0;
-    SDL_RenderCopy(mainRenderer, retreat, NULL, NULL);
-    if (oldTime > 3){
-        SDL_DestroyTexture(retreat);
-        oldTime = 0;
-        player.health += (rand() % 30) + 1;
-        player.crew += (rand() % 10) + 1;
-        player.gold += (rand() % 100) + 1;
-        
-        *StateOfGame = WORLD_STATE;
-    } else {
-        oldTime += deltaTime;
+    static int initialised = 0;
+    static int startCannons;
+    static int startHealth;
+    static int startCrew;
+    static int startGold;
+    static int isLootScene;
+    
+    
+    if(!initialised){
+        startCannons = player.weaponNumber;
+        startHealth = player.health;
+        startGold = player.gold;
+        startCrew = player.crew;
+        isLootScene = 0;
+        initialised = 1;
     }
     
-    SDL_DestroyTexture(retreat);
+    if(isLootScene){
+        if(AL_LoadLootScreen(mainRenderer, StateOfGame, startCannons, startHealth, startCrew, startGold)){
+            *StateOfGame = WORLD_STATE;
+            SDL_DestroyTexture(retreat);
+            initialised = 0;
+        };
+        
+    } else {
+        static double oldTime = 0;
+        SDL_RenderCopy(mainRenderer, retreat, NULL, NULL);
+        if (oldTime > 3.0){
+            SDL_DestroyTexture(retreat);
+            oldTime = 0;
+            isLootScene = 1;
+        } else {
+            AL_collectLoot();
+            oldTime += deltaTime;
+        }
+        
+        SDL_DestroyTexture(retreat);
+    }
+    
 }
 
 
@@ -699,9 +725,11 @@ void AL_LoadWeatherState(double deltaTime, SDL_Renderer *mainRenderer, GameState
     static int initialised = 0;
     static int xLocaton = 150;
     static int xCorBird = 1200;
+    static int startHealth;
+    static int startCrew;
+    static int damageDealth;
     int shipMove = 6000;
     
-    encounter->locale.weatherseverity = 23;
     
     if(!initialised){
         
@@ -723,7 +751,7 @@ void AL_LoadWeatherState(double deltaTime, SDL_Renderer *mainRenderer, GameState
             effectImage.image = AL_loadTexture("images/weatherSprites/wind.png", mainRenderer);
             AL_setSpriteSheetData(&effectImage, 120, 30, 1);
             AL_setSpriteSizeAndLocation(&effectImage, 100, 200, 50, 50);
-            HUD.image = AL_loadTexture("images/weatherSprites/hudWindy.png", mainRenderer);
+            HUD.image = AL_loadTexture("images/weatherSprites/hudWind.png", mainRenderer);
             
         } else if (encounter->locale.weatherseverity < 75){
             storm.image = AL_loadTexture("images/mockCombatSprites/nightNoMoon.jpg", mainRenderer);
@@ -735,7 +763,9 @@ void AL_LoadWeatherState(double deltaTime, SDL_Renderer *mainRenderer, GameState
             AL_setSpriteSheetData(&storm, 200, 9, 3);
             HUD.image = AL_loadTexture("images/weatherSprites/hudStorm.png", mainRenderer);
         }
-        
+        startHealth = player.health;
+        startCrew = player.crew;
+        damageDealth = 0;
         oldTime = SDL_GetTicks();
         
         initialised = 1;
@@ -774,11 +804,62 @@ void AL_LoadWeatherState(double deltaTime, SDL_Renderer *mainRenderer, GameState
         SDL_RenderCopy(mainRenderer, HUD.image, NULL, NULL);
 
     } else {
-        oldTime = 0;
-        initialised = 0;
-        *StateOfGame = WORLD_STATE;
+        if (!damageDealth){
+            AL_weatherCombat(encounter, StateOfGame);
+            damageDealth = 1;
+        }
+        
+        int Health = startHealth - player.health;
+        int Crew = startCrew - player.crew;
+        if(AL_LoadWeatherScene(mainRenderer, Crew, Health)){
+            *StateOfGame = WORLD_STATE;
+            initialised = 0;
+        }
     }
     
+}
+
+int AL_LoadLootScreen(SDL_Renderer *mainRenderer, GameState *StateOfGame, int startCannons, int startHealth, int startCrew, int startGold){
+    static AL_Sprite lootScreen;
+    static int initialised = 0;
+    static int oldTime = 0;
+    if(!initialised){
+        lootScreen.image = AL_loadTexture("images/loot.png", mainRenderer);
+        oldTime = SDL_GetTicks();
+        initialised = 1;
+    }
+    
+    SDL_RenderClear(mainRenderer);
+    SDL_RenderCopy(mainRenderer, lootScreen.image, NULL, NULL);
+    AL_renderUIStats(mainRenderer);
+    AL_renderLootValues(mainRenderer, player.gold - startGold, player.crew - startCrew, player.weaponNumber - startCannons, player.health - startHealth);
     
     
+    if (oldTime + 8000 < SDL_GetTicks()){
+        initialised = 0;
+        return  1;
+        
+    }
+    return 0;
+}
+int AL_LoadWeatherScene(SDL_Renderer *mainRenderer, int crew, int health){
+    static AL_Sprite weatherScreen;
+    static int initialised = 0;
+    static int oldTime = 0;
+    if (!initialised){
+        weatherScreen.image = AL_loadTexture("images/weatherPassed.jpg", mainRenderer);
+        oldTime = SDL_GetTicks();
+        initialised = 1;
+    }
+    
+    SDL_RenderClear(mainRenderer);
+    SDL_RenderCopy(mainRenderer, weatherScreen.image, NULL, NULL);
+    AL_renderUIStats(mainRenderer);
+    AL_renderWeatherValues(mainRenderer, health, crew);
+    
+    if (oldTime + 8000 < SDL_GetTicks()){
+        initialised = 0;
+        return 1;
+    }
+    return 0;
 }

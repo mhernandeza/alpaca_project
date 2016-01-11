@@ -14,10 +14,10 @@ Flying Dutchman
 a floating train
 it
 railguns
-30
+15
 1
 75
-200
+100
 2
 
 0

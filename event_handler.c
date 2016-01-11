@@ -24,9 +24,9 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_LoadCombatState(mainRenderer, StateOfGame, event, deltaTime, encounter);
             AL_renderUIStats(mainRenderer);
             AL_renderEnemyStats(mainRenderer, encounter);
-            if(player.health <= player.retreatHealth){
+            if((player.health <= player.retreatHealth && player.health >= 0) || (player.weaponNumber <= player.retreatWeapons && player.weaponNumber >= 0)){
                 AL_LoadRetreatScene(deltaTime, mainRenderer, StateOfGame);
-            } else if (encounter->weaponnumber <= 0){
+            } else if (encounter->weaponnumber <= 0 || encounter->health <= 0){
                 AL_LoadSurrenderScene(deltaTime, mainRenderer, StateOfGame);
             }
             break;

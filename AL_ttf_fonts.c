@@ -19,7 +19,8 @@ SDL_Texture* AL_renderText(const char * message, TTF_Font *fontFile, SDL_Color c
         fprintf(stderr, "Failed to create texture from surface\n");
         return NULL;
     }
-
+    
+    
     SDL_FreeSurface(surf);
     return texture;
 }
@@ -55,7 +56,7 @@ void AL_renderFont(SDL_Renderer *mainRenderer, SDL_Color color, TTF_Font *fontFi
     destination.w = w;
 
     SDL_RenderCopy(mainRenderer, font, NULL, &destination);
-
+    
     SDL_DestroyTexture(font);
 }
 
@@ -249,4 +250,42 @@ void AL_renderInfo(char *str, SDL_Renderer *mainRenderer){
     
     TTF_CloseFont(fontFile);
     
+}
+
+void AL_renderLootValues(SDL_Renderer *mainRenderer, int startGold, int startCrew, int startCannon, int startHealth){
+    SDL_Color color = {83, 62, 0, 0};
+    TTF_Font *fontFile;
+    int x = 600, y = 270;
+    
+    AL_openFontFile(&fontFile, FONT_NAME_2, 60);
+    char stringToRender[20];
+    itoa(startCrew, stringToRender, 10);
+    
+    AL_renderFont(mainRenderer, color, fontFile, x, y, stringToRender);
+    itoa(startGold, stringToRender, 10);
+    AL_renderFont(mainRenderer, color, fontFile, x, y + 80, stringToRender);
+    itoa(startHealth, stringToRender, 10);
+    AL_renderFont(mainRenderer, color, fontFile, x, y + 180, stringToRender);
+    itoa(startCannon, stringToRender, 10);
+    AL_renderFont(mainRenderer, color, fontFile, x+90, y + 260, stringToRender);
+    
+    TTF_CloseFont(fontFile);
+    
+}
+
+void AL_renderWeatherValues(SDL_Renderer *mainRenderer, int health, int crew){
+    SDL_Color color = {83, 62, 0,0};
+    TTF_Font *fontFile;
+    int x = 800, y = 400;
+    
+    AL_openFontFile(&fontFile, FONT_NAME_2, 80);
+    
+    char stringToRender[20];
+    health *= -1;
+    crew *= -1;
+    
+    itoa(health, stringToRender, 10);
+    AL_renderFont(mainRenderer, color, fontFile, x, y, stringToRender);
+    itoa(crew, stringToRender, 10);
+    AL_renderFont(mainRenderer, color, fontFile, x, y+100, stringToRender);
 }
