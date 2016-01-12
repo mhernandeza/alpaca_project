@@ -1,6 +1,6 @@
 # include "AL_encounters.h"
-#include "state_data.h"
-#include "event_handler.h" //Change this later. We just need SDL
+#include "AL_state_data.h"
+#include "AL_event_handler.h" //Change this later. We just need SDL
 # define WORDL 20
 
 void AL_presentStats(User *player); /*Replace by SDL*/

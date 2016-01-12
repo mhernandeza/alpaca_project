@@ -1,7 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
-#include <stdio.h>
-#include "event_handler.h"
+#include "AL_event_handler.h"
 
 
 
@@ -12,16 +11,17 @@ int main(int argc, const char * argv[]) {
     SDL_Renderer *mainRenderer = NULL;
     AL_initWindowAndRenderer(&mainWindow, &mainRenderer);
     AL_initImage();
+    AL_initSound();
     srand(time(NULL));
     
-
+    
     
     AL_initializePlayer(&player);
     Encounter encounterArray[8];
     Encounter encounter;
     
     SDL_Event event;
-    GameState StateOfGame = MAIN_MENU;
+    GameState StateOfGame = LOGO_STATE;
     int prevTime = 0;
     int currentTime = 0;
     double deltaTime = 0;
@@ -36,6 +36,14 @@ int main(int argc, const char * argv[]) {
         prevTime = currentTime;
         currentTime = SDL_GetTicks();
         deltaTime = (currentTime - prevTime)/1000.0;
+        
+        if (event.key.keysym.sym == SDLK_m){
+            if(Mix_PausedMusic() == 1){
+                Mix_ResumeMusic();
+            } else {
+                Mix_PauseMusic();
+            }
+        }
         
         
         if(gettingEncounter == 1 && StateOfGame == WORLD_STATE){

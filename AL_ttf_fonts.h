@@ -2,7 +2,7 @@
 #define AL_ttf_fonts_h
 
 #include <stdio.h>
-#include "state_data.h"
+#include "AL_state_data.h"
 #include "AL_encounters.h"
 
 #define FONT_NAME "fonts/Primitive.ttf"

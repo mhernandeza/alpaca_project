@@ -1,10 +1,15 @@
 # include "AL_weather.h"
 
 void AL_weatherCombat(Encounter *enemy, GameState *StateOfGame){
+    static int initialised = 0;
     static int oldTime = 0;
-    if (oldTime == 0){
+    if (!initialised){
+        
         oldTime = SDL_GetTicks();
+
     }
+    
+    
   int stormDuration= 20000 - player.speed*1000;
   int damage = enemy->locale.weatherseverity;
   int healthDamage = 0;
@@ -23,7 +28,5 @@ void AL_weatherCombat(Encounter *enemy, GameState *StateOfGame){
     AL_decreaseHealth(&player, healthDamage);
     AL_decreaseCrew(&player, crewDamage);
   }
-  else{
-    *StateOfGame=MAIN_MENU;
-  }
+  
 }

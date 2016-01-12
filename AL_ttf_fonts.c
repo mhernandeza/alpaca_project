@@ -7,8 +7,9 @@ SDL_Texture* AL_renderText(const char * message, TTF_Font *fontFile, SDL_Color c
     if(fontFile == NULL){
         fontFile = TTF_OpenFont(FONT_NAME_2, 60);
     }
-    
-    SDL_Surface *surf = TTF_RenderText_Blended(fontFile, message, color);
+    char message2[300];
+    strcpy(message2, message);
+    SDL_Surface *surf = TTF_RenderText_Blended(fontFile, message2, color);
     if (surf == NULL){
         TTF_CloseFont(fontFile);
         fprintf(stderr, "Failed to render text to the surface.\n");
@@ -126,7 +127,7 @@ void AL_renderEnemyStats(SDL_Renderer *mainRenderer, Encounter *encounter){
 
 void AL_renderNumbers(SDL_Renderer *mainRender, int value) {
     char *stringToRender = (char *)malloc(sizeof(char) * 10);
-    SDL_Color color = {83, 62, 0, 0};
+    SDL_Color color = {0x58, 0x31, 0x01, 0};
     TTF_Font *fontFile;
     int x = 575, y = 525;
 
@@ -148,7 +149,7 @@ void AL_renderNumbers(SDL_Renderer *mainRender, int value) {
 }
 
 void AL_renderDescription(SDL_Renderer *mainRenderer, char *stringToRender){
-    SDL_Color color = {83, 62, 0, 0};
+    SDL_Color color = {0x57, 0x30, 0, 0};
     TTF_Font *fontFile;
     int x = 150, y = 275;
 
@@ -232,7 +233,7 @@ void stringsplit (char *test, char string[4][60])
 }
 
 void AL_renderInfo(char *str, SDL_Renderer *mainRenderer){
-    SDL_Color color = {0, 0, 0, 0};
+    SDL_Color color = {0x57, 0x30, 0x00, 0xff};
     char stringArray[4][60];
     TTF_Font *fontFile;
     int x = 250, y = 570;
@@ -253,7 +254,7 @@ void AL_renderInfo(char *str, SDL_Renderer *mainRenderer){
 }
 
 void AL_renderLootValues(SDL_Renderer *mainRenderer, int startGold, int startCrew, int startCannon, int startHealth){
-    SDL_Color color = {83, 62, 0, 0};
+    SDL_Color color = {0x71, 0x49, 0x0E, 0xff};
     TTF_Font *fontFile;
     int x = 600, y = 270;
     
@@ -274,13 +275,13 @@ void AL_renderLootValues(SDL_Renderer *mainRenderer, int startGold, int startCre
 }
 
 void AL_renderWeatherValues(SDL_Renderer *mainRenderer, int health, int crew){
-    SDL_Color color = {83, 62, 0,0};
+    SDL_Color color = {0x71, 0x49, 0x0E, 0xff};
     TTF_Font *fontFile;
     int x = 800, y = 400;
     
     AL_openFontFile(&fontFile, FONT_NAME_2, 80);
     
-    char stringToRender[20];
+    char stringToRender[50];
     health *= -1;
     crew *= -1;
     
@@ -288,4 +289,6 @@ void AL_renderWeatherValues(SDL_Renderer *mainRenderer, int health, int crew){
     AL_renderFont(mainRenderer, color, fontFile, x, y, stringToRender);
     itoa(crew, stringToRender, 10);
     AL_renderFont(mainRenderer, color, fontFile, x, y+100, stringToRender);
+    
+    TTF_CloseFont(fontFile);
 }

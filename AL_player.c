@@ -29,6 +29,8 @@ void AL_initializePlayer(User *player){
   player->oldTime = SDL_GetTicks();
     player->retreatHealth = 0;
     player->retreatWeapons = 0;
+    player->isInCombat = 0;
+    player->soundFX = NULL;
 }
 
 void AL_programReaction(User *player, Encounter *test){
