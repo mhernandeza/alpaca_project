@@ -14,7 +14,7 @@ Flying Dutchman
 a floating train
 it
 railguns
-15
+25
 1
 75
 100
@@ -26,17 +26,17 @@ a horrifying, undulating eldritch abomination
 it
 tentacles
 8
-100
+5
 1
 5000
 0
 
 4
 Weather
-a life threatening storm
+different weather
 it
-lightning
-1
+% mystery
+50
 100
 1
 100

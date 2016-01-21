@@ -23,4 +23,7 @@ void stringsplit (char *test, char string[4][60]);
 void AL_renderInfo(char *str, SDL_Renderer *mainRenderer);
 void AL_renderLootValues(SDL_Renderer *mainRenderer, int startGold, int startCrew, int startCannon, int startHealth);
 void AL_renderWeatherValues(SDL_Renderer *mainRenderer, int health, int crew);
+void AL_renderHighScore(SDL_Renderer *mainRender);
+void initialiseGlobalFonts();
+void closeGloableFonts();
 #endif

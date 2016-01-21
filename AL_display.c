@@ -24,6 +24,10 @@ bool AL_initWindowAndRenderer(SDL_Window **window, SDL_Renderer ** renderTarget)
         }
     }
     
+    SDL_ShowCursor(0);
+   // SDL_SetWindowFullscreen(*window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    
+    
     *renderTarget = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (*renderTarget == NULL){
         fprintf(stderr, "Failed to create a renderer: %s\n", SDL_GetError());
@@ -51,7 +55,7 @@ SDL_Texture *AL_loadTexture(char *path, SDL_Renderer *renderTarget){
     SDL_Texture *texture = NULL;
     SDL_Surface *surface = IMG_Load(path);
     if (surface == NULL){
-        fprintf(stderr,"Faild to create an SDL Surface. %s\n", SDL_GetError());
+        fprintf(stderr,"Failed to create an SDL Surface. %s\n", SDL_GetError());
     }
     else {
         texture = SDL_CreateTextureFromSurface(renderTarget, surface);
@@ -111,18 +115,29 @@ void AL_setSpriteSizeAndLocation(AL_Sprite *spriteSheet, int xLocation, int yLoc
 
 
 void playFireCannonAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter){
+    if (player.health <= player.retreatHealth || player.weaponNumber <= player.retreatWeapons){
+        return;
+    }
     if(player.isFiring){
         AL_getNextFrame(cannonSprite);
         SDL_RenderCopy(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination);
         if(cannonSprite->source.y + cannonSprite->frameHeight >= cannonSprite->textureHeight){
             player.isFiring = false;
-            encounter->health -= AL_damageHandle(player.weaponNumber, player.weaponDamage);
-            encounter->weaponnumber -= AL_criticalDamageHandle(player.weaponNumber, player.weaponDamage);
+            if(encounter->ID == 0){
+                encounter->health -= AL_damageHandle(player.weaponNumber, player.weaponDamage);
+            } else {
+                encounter->health -= AL_damageHandle(player.weaponNumber, player.weaponDamage);
+                encounter->weaponnumber -= AL_criticalDamageHandle(player.weaponNumber, player.weaponDamage);
+            }
+            
         }
     }
 }
 
 void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite, Encounter *encounter){
+    if (encounter->weaponnumber <= 0 || encounter->health <= 0){
+        return;
+    }
     if(encounter->isFiring){
         AL_getNextFrame(cannonSprite);
         SDL_RenderCopyEx(mainRenderer, cannonSprite->image, &cannonSprite->source, &cannonSprite->destination, 0.0, NULL, true);
@@ -130,6 +145,9 @@ void playEnemyFireAnimation(SDL_Renderer *mainRenderer, AL_Sprite *cannonSprite,
             encounter->isFiring = false;
             player.health -= AL_damageHandle(encounter->weaponnumber, encounter->weapondamage);
             player.weaponNumber -= AL_criticalDamageHandle(encounter->weaponnumber, encounter->weapondamage);
+            if (player.weaponNumber < 0){
+                player.weaponNumber = 0;
+            }
         }
     }
 }
@@ -201,17 +219,23 @@ void AL_LoadMainMenuState(SDL_Renderer *mainRenderer, GameState *StateOfGame, SD
         if (skullSprite.destination.y == startPosition){
             initialised = 0;
             *StateOfGame = WORLD_STATE;
+            SDL_DestroyTexture(skullSprite.image);
+            SDL_DestroyTexture(mainMenuTexture);
             Mix_HaltMusic();
             Mix_FreeMusic(player.music);
         } else if (skullSprite.destination.y == exitPosition){
             initialised = 0;
             Mix_HaltMusic();
             Mix_FreeMusic(player.music);
+            SDL_DestroyTexture(skullSprite.image);
+            SDL_DestroyTexture(mainMenuTexture);
             event->type = SDL_QUIT;
         } else if (skullSprite.destination.y == optionPosition){
             initialised = 0;
             Mix_HaltMusic();
             Mix_FreeMusic(player.music);
+            SDL_DestroyTexture(skullSprite.image);
+            SDL_DestroyTexture(mainMenuTexture);
             player.music = NULL;
             *StateOfGame = OPTIONS_MENU;
         }
@@ -311,11 +335,12 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
     static int oldTime;
     static int swap = 1;
     int swapRate = 3500;
-    char shipType[50];
-    char backgroundType[50];
-    char number[20];
-    TTF_Font *fontFile = NULL;
-    SDL_Color color = {0x57,0x30, 0x00};
+    char shipType[100];
+    char backgroundType[100];
+    char number[100];
+    TTF_Font *fontFile;
+    SDL_Color color = {0xa0,0x00, 0x00};
+    AL_openFontFile(&fontFile, FONT_NAME_2, 60);
     
     if (encounter->ID == 0){
         strcpy(shipType, "images/mockCombatSprites/krakenBody2.png");
@@ -341,6 +366,7 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
     if(!player.isInCombat){
        
         background.image = AL_loadTexture(backgroundType, mainRenderer);
+        
 
         playerShip.image = AL_loadTexture("images/mockCombatSprites/ourShipCombat2.png", mainRenderer);
         AL_setSpriteSheetData(&playerShip, 150, 8, 1);
@@ -350,7 +376,7 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
         
         if(encounter->ID == 0){
             AL_setSpriteSheetData(&enemyShip, 120, 5, 1);
-            AL_setSpriteSizeAndLocation(&enemyShip, 760, 270, 350, 250);
+            AL_setSpriteSizeAndLocation(&enemyShip, 725, 270, 380, 250);
             
             cannonSpriteEnemy.image = AL_loadTexture("images/mockCombatSprites/attack.png", mainRenderer);
             AL_setSpriteSheetData(&cannonSpriteEnemy, 90, 10, 19);
@@ -416,6 +442,7 @@ void AL_LoadCombatState(SDL_Renderer *mainRenderer, GameState *StateofGame, SDL_
         enemyShip.image = NULL; cannonSprite.image = NULL;
         player.isInCombat = 0;
     }
+    TTF_CloseFont(fontFile);
     
 }
 
@@ -471,6 +498,7 @@ void AL_LoadLogoState(SDL_Renderer *mainRenderer, GameState *StateOfGame){
     if(oldTime + 6000 < SDL_GetTicks()){
         Mix_HaltMusic();
         Mix_FreeMusic(player.music);
+        SDL_DestroyTexture(logo);
         *StateOfGame = MAIN_MENU;
     }
     if(oldTime + 4500 > SDL_GetTicks()){
@@ -561,6 +589,9 @@ void AL_LoadBehaviourState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL
         SDL_RenderCopy(mainRender, behCannonNo.image, NULL, NULL);
     } else if (scene == cannonNum){
         SDL_RenderCopy(mainRender, behCannonNum.image, NULL, NULL);
+        if (player.retreatWeapons >= player.weaponNumber){
+            player.retreatWeapons = player.weaponNumber;
+        }
         AL_renderNumbers(mainRender, player.retreatWeapons);
     }
     
@@ -673,8 +704,14 @@ void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Eve
             copyEncounter(encounter, encounterArray[0]);
             if(encounter->ID != 4){
                 *StateOfGame = BEHAVIOUR_STATE;
+                SDL_DestroyTexture(compassNE.image);
+                SDL_DestroyTexture(compassNN.image);
+                SDL_DestroyTexture(compassNW.image);
                 initialised = 0;
             } else {
+                SDL_DestroyTexture(compassNE.image);
+                SDL_DestroyTexture(compassNN.image);
+                SDL_DestroyTexture(compassNW.image);
                 *StateOfGame = WEATHER_STATE;
                 initialised = 0;
             }
@@ -682,9 +719,15 @@ void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Eve
         if(scene == nwScene){
             copyEncounter(encounter, encounterArray[7]);
             if(encounter->ID != 4){
+                SDL_DestroyTexture(compassNE.image);
+                SDL_DestroyTexture(compassNN.image);
+                SDL_DestroyTexture(compassNW.image);
                 *StateOfGame = BEHAVIOUR_STATE;
                 initialised = 0;
             } else {
+                SDL_DestroyTexture(compassNE.image);
+                SDL_DestroyTexture(compassNN.image);
+                SDL_DestroyTexture(compassNW.image);
                 *StateOfGame = WEATHER_STATE;
                 initialised = 0;
             }
@@ -692,9 +735,15 @@ void AL_LoadWorldState(SDL_Renderer *mainRender, GameState *StateOfGame, SDL_Eve
         if(scene == neScene){
             copyEncounter(encounter, encounterArray[1]);
             if(encounter->ID != 4){
+                SDL_DestroyTexture(compassNE.image);
+                SDL_DestroyTexture(compassNN.image);
+                SDL_DestroyTexture(compassNW.image);
                 *StateOfGame = BEHAVIOUR_STATE;
                 initialised = 0;
             } else {
+                SDL_DestroyTexture(compassNE.image);
+                SDL_DestroyTexture(compassNN.image);
+                SDL_DestroyTexture(compassNW.image);
                 *StateOfGame = WEATHER_STATE;
                 initialised = 0;
             }
@@ -713,6 +762,7 @@ void AL_LoadRetreatScene(double deltaTime, SDL_Renderer *mainRenderer, GameState
         Mix_FreeMusic(player.music);
         SDL_DestroyTexture(retreat);
         player.isInCombat = 0;
+        oldTime = 0;
         *StateOfGame = WORLD_STATE;
     } else {
         oldTime += deltaTime;
@@ -729,7 +779,6 @@ void AL_LoadSurrenderScene(double deltaTime, SDL_Renderer *mainRenderer, GameSta
     static int startCrew;
     static int startGold;
     static int isLootScene;
-    
     
     if(!initialised){
         startCannons = player.weaponNumber;
@@ -780,6 +829,12 @@ void AL_LoadWeatherState(double deltaTime, SDL_Renderer *mainRenderer, GameState
     static int startCrew;
     static int damageDealt;
     int shipMove = 6000;
+    
+    //WEATHER SHOWCASE CODE
+    // encounter->locale.weatherseverity = 23;
+    // encounter->locale.weatherseverity = 35;
+    // encounter->locale.weatherseverity = 67;
+    // encounter->locale.weatherseverity = 80;
     
     
     if(!initialised){
@@ -876,7 +931,6 @@ void AL_LoadWeatherState(double deltaTime, SDL_Renderer *mainRenderer, GameState
             SDL_DestroyTexture(playerShip.image);
             SDL_DestroyTexture(HUD.image);
             SDL_DestroyTexture(effectImage.image);
-            SDL_Delay(2000);
             initialised = 0;
         }
     }

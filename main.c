@@ -31,11 +31,16 @@ int main(int argc, const char * argv[]) {
     
     
     AL_initialiseTTF();
+    initialiseGlobalFonts();
     
     for (bool isRunning = true; isRunning; isRunning = AL_checkForQuit(event)){
         prevTime = currentTime;
         currentTime = SDL_GetTicks();
         deltaTime = (currentTime - prevTime)/1000.0;
+        
+        if(StateOfGame == MAIN_MENU){
+            AL_initializePlayer(&player);
+        }
         
         if (event.key.keysym.sym == SDLK_m){
             if(Mix_PausedMusic() == 1){
@@ -64,7 +69,7 @@ int main(int argc, const char * argv[]) {
         SDL_RenderPresent(mainRenderer);
     }
     
-    
+    closeGloableFonts();
     SDL_DestroyRenderer(mainRenderer);
     SDL_DestroyWindow(mainWindow);
     IMG_Quit();

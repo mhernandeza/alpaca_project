@@ -24,14 +24,15 @@ void AL_callCorrectState(GameState *StateOfGame, SDL_Renderer *mainRenderer, SDL
             AL_LoadCombatState(mainRenderer, StateOfGame, event, deltaTime, encounter);
             AL_renderUIStats(mainRenderer);
             AL_renderEnemyStats(mainRenderer, encounter);
-            if((player.health <= player.retreatHealth && player.health >= 0) || (player.weaponNumber <= player.retreatWeapons && player.weaponNumber >= 0)){
+            if((player.health <= player.retreatHealth && player.health >= 0) || (player.weaponNumber <= player.retreatWeapons && player.weaponNumber > 0)){
                 AL_LoadRetreatScene(deltaTime, mainRenderer, StateOfGame);
-            } else if (encounter->weaponnumber <= 0 || encounter->health <= 0){
+            } else if ((encounter->weaponnumber <= 0 || encounter->health <= 0) && encounter->ID != 0){
                 AL_LoadSurrenderScene(deltaTime, mainRenderer, StateOfGame);
             }
             break;
         case GAME_OVER:
             AL_LoadGameOverState(mainRenderer, StateOfGame, event);
+            AL_renderHighScore(mainRenderer);
             break;
         case LOGO_STATE:
             AL_LoadLogoState(mainRenderer, StateOfGame);
@@ -86,7 +87,7 @@ SDL_Event AL_checkForPress(GameState StateOfGame){
             }
         }
     }
-    if (StateOfGame == PLAY_GAME || StateOfGame == OPTIONS_MENU){
+    if (StateOfGame == PLAY_GAME || StateOfGame == OPTIONS_MENU || StateOfGame == LOGO_STATE){
         while(SDL_PollEvent(&event) != 0){
             if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){
@@ -111,7 +112,7 @@ SDL_Event AL_checkForPress(GameState StateOfGame){
             }
         }
     }
-    if (StateOfGame == COMBAT_STATE){
+    if (StateOfGame == COMBAT_STATE || StateOfGame == WEATHER_STATE){
         while(SDL_PollEvent(&event) != 0){
             if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){

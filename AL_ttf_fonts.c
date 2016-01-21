@@ -1,17 +1,44 @@
 #include "AL_ttf_fonts.h"
 
+TTF_Font *gFontFile60;
+TTF_Font *gFontFile50;
+TTF_Font *gFontFile120;
+TTF_Font *gFontFile30;
+TTF_Font *gFontFile25;
+TTF_Font *gFontFile80;
+TTF_Font *gFontFile20;
+
+
 char* itoa(int num, char* str, int base);
 void reverse(char str[]);
 
+void initialiseGlobalFonts(){
+    AL_openFontFile(&gFontFile60, FONT_NAME_2, 60);
+    AL_openFontFile(&gFontFile50, FONT_NAME_2, 50);
+    AL_openFontFile(&gFontFile30, FONT_NAME_2, 30);
+    AL_openFontFile(&gFontFile25, FONT_NAME_2, 25);
+    AL_openFontFile(&gFontFile120, FONT_NAME_2, 120);
+    AL_openFontFile(&gFontFile80, FONT_NAME_2, 80);
+    AL_openFontFile(&gFontFile20, FONT_NAME_2, 20);
+   // gFontFile50 = TTF_OpenFont(FONT_NAME_2, 50);
+   // gFontFile120 = TTF_OpenFont(FONT_NAME_2, 120);
+   // gFontFile30 = TTF_OpenFont(FONT_NAME_2, 30);
+   // gFontFile25 = TTF_OpenFont(FONT_NAME_2, 25);
+   // gFontFile80 = TTF_OpenFont(FONT_NAME_2, 80);
+   // gFontFile20 = TTF_OpenFont(FONT_NAME_2, 20);
+}
+
 SDL_Texture* AL_renderText(const char * message, TTF_Font *fontFile, SDL_Color color, SDL_Renderer *renderer) {
-    if(fontFile == NULL){
-        fontFile = TTF_OpenFont(FONT_NAME_2, 60);
-    }
+ 
     char message2[300];
     strcpy(message2, message);
+    
+    if(fontFile == NULL){
+        printf("The font file was null\n");
+    }
+    
     SDL_Surface *surf = TTF_RenderText_Blended(fontFile, message2, color);
     if (surf == NULL){
-        TTF_CloseFont(fontFile);
         fprintf(stderr, "Failed to render text to the surface.\n");
         return NULL;
     }
@@ -45,6 +72,11 @@ int AL_initialiseTTF(){
 }
 
 void AL_renderFont(SDL_Renderer *mainRenderer, SDL_Color color, TTF_Font *fontFile, int xCor, int yCor, const char *stringToPrint){
+    
+    if (fontFile == NULL){
+        printf("File was null\n");
+        fontFile = TTF_OpenFont(FONT_NAME_2, 60);
+    }
     SDL_Texture *font = AL_renderText(stringToPrint, fontFile, color, mainRenderer);
     SDL_Rect destination;
     destination.x = xCor;
@@ -70,39 +102,45 @@ void AL_renderUIStats(SDL_Renderer *mainRender){
     int yCor = 48;
     int xOffset = 100;
     int yOffset = 40;
-    TTF_Font *fontFile;
-
-    AL_openFontFile(&fontFile, FONT_NAME_2, 20);
-
+    
     strcpy(statString, "HULL: ");
-    numberString = itoa(player.health, numberString, 10);
-    AL_renderFont(mainRender, color, fontFile, xCor, yCor, statString);
-    AL_renderFont(mainRender, color, fontFile, xCor + xOffset, yCor ,numberString);
+    if (player.health <= 0){
+        numberString = itoa(0, numberString, 10);
+    } else {
+        numberString = itoa(player.health, numberString, 10);
+    }
+    if (gFontFile20 == NULL){
+        printf("The globabl was null\n");
+    }
+    
+    AL_renderFont(mainRender, color, gFontFile20, xCor, yCor, statString);
+    AL_renderFont(mainRender, color, gFontFile20, xCor + xOffset, yCor ,numberString);
 
     strcpy(statString, "SPEED: ");
     numberString = itoa(player.speed, numberString, 10);
-    AL_renderFont(mainRender, color, fontFile, xCor, yCor + yOffset, statString);
-    AL_renderFont(mainRender, color, fontFile, xCor + xOffset, yCor + yOffset, numberString);
+    AL_renderFont(mainRender, color, gFontFile20, xCor, yCor + yOffset, statString);
+    AL_renderFont(mainRender, color, gFontFile20, xCor + xOffset, yCor + yOffset, numberString);
 
     strcpy(statString, "CANNONS: ");
-    numberString = itoa(player.weaponNumber, numberString, 10);
-    AL_renderFont(mainRender, color, fontFile, xCor, yCor + yOffset*2, statString);
-    AL_renderFont(mainRender, color, fontFile, xCor + xOffset, yCor + yOffset*2, numberString);
+    if(player.weaponNumber <= 0){
+         numberString = itoa(0, numberString, 10);
+    } else {
+         numberString = itoa(player.weaponNumber, numberString, 10);
+    }
+    AL_renderFont(mainRender, color, gFontFile20, xCor, yCor + yOffset*2, statString);
+    AL_renderFont(mainRender, color, gFontFile20, xCor + xOffset, yCor + yOffset*2, numberString);
 
     strcpy(statString, "CREW: ");
     numberString = itoa(player.crew, numberString, 10);
-    AL_renderFont(mainRender, color, fontFile, xCor, yCor + yOffset*3, statString);
-    AL_renderFont(mainRender, color, fontFile, xCor + xOffset, yCor + yOffset*3, numberString);
+    AL_renderFont(mainRender, color, gFontFile20, xCor, yCor + yOffset*3, statString);
+    AL_renderFont(mainRender, color, gFontFile20, xCor + xOffset, yCor + yOffset*3, numberString);
 
-    TTF_CloseFont(fontFile);
-    AL_openFontFile(&fontFile, FONT_NAME_2, 60);
-
+   
 
     SDL_Color colorGold = {227, 149, 52, 0};
     numberString = itoa(player.gold, numberString, 10);
-    AL_renderFont(mainRender, colorGold, fontFile, 1120, -2, numberString);
+    AL_renderFont(mainRender, colorGold, gFontFile50, 1115, 2, numberString);
 
-    TTF_CloseFont(fontFile);
     free(statString);
     free(numberString);
 }
@@ -110,18 +148,21 @@ void AL_renderUIStats(SDL_Renderer *mainRender){
 void AL_renderEnemyStats(SDL_Renderer *mainRenderer, Encounter *encounter){
     char *stringToRender = (char *)malloc(sizeof(char)*30);
     SDL_Color color = {255, 255, 255, 0};
-    TTF_Font *fontFile;
+
     int x = 850, y = 250;
 
-    AL_openFontFile(&fontFile, FONT_NAME_2, 50);
     stringToRender = itoa(encounter->health, stringToRender, 10);
     strcat(stringToRender, "%");
-    AL_renderFont( mainRenderer, color, fontFile, x, y, stringToRender);
-
-    AL_renderFont(mainRenderer, color, fontFile, 500, 0, encounter->name);
+    AL_renderFont( mainRenderer, color, gFontFile50, x, y, stringToRender);
+    
+    if ( encounter->ID == 1){
+        AL_renderFont(mainRenderer, color, gFontFile50, 400, 0, encounter->name);
+    }else{
+        AL_renderFont(mainRenderer, color, gFontFile50, 500, 0, encounter->name);
+    }
 
     free(stringToRender);
-    TTF_CloseFont(fontFile);
+  
 
 }
 
@@ -131,21 +172,20 @@ void AL_renderNumbers(SDL_Renderer *mainRender, int value) {
     TTF_Font *fontFile;
     int x = 575, y = 525;
 
-    AL_openFontFile(&fontFile, FONT_NAME_2, 120);
     stringToRender = itoa(value, stringToRender, 10);
     if(value < 10){
-        AL_renderFont(mainRender, color, fontFile, x + 63, y, stringToRender);
-        AL_renderFont(mainRender, color, fontFile, x, y, "0");
+        AL_renderFont(mainRender, color, gFontFile120, x + 63, y, stringToRender);
+        AL_renderFont(mainRender, color, gFontFile120, x, y, "0");
     } else  if (value < 20){
-        AL_renderFont(mainRender, color, fontFile, x + 20, y, stringToRender);
+        AL_renderFont(mainRender, color, gFontFile120, x + 20, y, stringToRender);
     } else {
-        AL_renderFont(mainRender, color, fontFile, x , y, stringToRender);
+        AL_renderFont(mainRender, color, gFontFile120, x , y, stringToRender);
 
     }
 
 
     free(stringToRender);
-    TTF_CloseFont(fontFile);
+
 }
 
 void AL_renderDescription(SDL_Renderer *mainRenderer, char *stringToRender){
@@ -153,10 +193,7 @@ void AL_renderDescription(SDL_Renderer *mainRenderer, char *stringToRender){
     TTF_Font *fontFile;
     int x = 150, y = 275;
 
-    AL_openFontFile(&fontFile, FONT_NAME_2, 30);
-
-    AL_renderFont(mainRenderer, color, fontFile, x, y, stringToRender);
-    TTF_CloseFont(fontFile);
+    AL_renderFont(mainRenderer, color, gFontFile30, x, y, stringToRender);
 
 }
 
@@ -240,37 +277,34 @@ void AL_renderInfo(char *str, SDL_Renderer *mainRenderer){
     
     stringsplit(str, stringArray);
     
-    AL_openFontFile(&fontFile, FONT_NAME_2, 25);
+   
 
     int i;
-    AL_renderFont(mainRenderer, color, fontFile, x + 12, y + i * 30, stringArray[0]);
+    AL_renderFont(mainRenderer, color, gFontFile25, x + 12, y + i * 30, stringArray[0]);
 
     for (i = 1; i < 3; i++){
-        AL_renderFont(mainRenderer, color, fontFile, x, y + i * 30, stringArray[i]);
+        AL_renderFont(mainRenderer, color, gFontFile25, x, y + i * 30, stringArray[i]);
     }
-    
-    TTF_CloseFont(fontFile);
     
 }
 
 void AL_renderLootValues(SDL_Renderer *mainRenderer, int startGold, int startCrew, int startCannon, int startHealth){
     SDL_Color color = {0x71, 0x49, 0x0E, 0xff};
-    TTF_Font *fontFile;
     int x = 600, y = 270;
     
-    AL_openFontFile(&fontFile, FONT_NAME_2, 60);
+
     char stringToRender[20];
     itoa(startCrew, stringToRender, 10);
     
-    AL_renderFont(mainRenderer, color, fontFile, x, y, stringToRender);
+    AL_renderFont(mainRenderer, color, gFontFile60, x, y, stringToRender);
     itoa(startGold, stringToRender, 10);
-    AL_renderFont(mainRenderer, color, fontFile, x, y + 80, stringToRender);
+    AL_renderFont(mainRenderer, color, gFontFile60, x, y + 80, stringToRender);
     itoa(startHealth, stringToRender, 10);
-    AL_renderFont(mainRenderer, color, fontFile, x, y + 180, stringToRender);
+    AL_renderFont(mainRenderer, color, gFontFile60, x, y + 180, stringToRender);
     itoa(startCannon, stringToRender, 10);
-    AL_renderFont(mainRenderer, color, fontFile, x+90, y + 260, stringToRender);
+    AL_renderFont(mainRenderer, color, gFontFile60, x+90, y + 260, stringToRender);
     
-    TTF_CloseFont(fontFile);
+
     
 }
 
@@ -278,17 +312,40 @@ void AL_renderWeatherValues(SDL_Renderer *mainRenderer, int health, int crew){
     SDL_Color color = {0x71, 0x49, 0x0E, 0xff};
     TTF_Font *fontFile;
     int x = 800, y = 400;
-    
-    AL_openFontFile(&fontFile, FONT_NAME_2, 80);
+ 
     
     char stringToRender[50];
     health *= -1;
     crew *= -1;
     
     itoa(health, stringToRender, 10);
-    AL_renderFont(mainRenderer, color, fontFile, x, y, stringToRender);
+    AL_renderFont(mainRenderer, color, gFontFile80, x, y, stringToRender);
     itoa(crew, stringToRender, 10);
-    AL_renderFont(mainRenderer, color, fontFile, x, y+100, stringToRender);
+    AL_renderFont(mainRenderer, color, gFontFile80, x, y+100, stringToRender);
     
-    TTF_CloseFont(fontFile);
+}
+
+void AL_renderHighScore(SDL_Renderer *mainRender){
+    char *statString = (char *)malloc(sizeof(char)*30);
+    char *numberString = (char *)malloc(sizeof(char)*5);
+    TTF_Font *fontFile;
+    
+    SDL_Color colorGold = {0xff, 0xff, 0xff, 0};
+    strcpy(statString, "Score:");
+    numberString = itoa(player.gold, numberString, 10);
+    strcat(statString, numberString);
+    AL_renderFont(mainRender, colorGold, gFontFile60, 920, -2, statString);
+    
+    free(statString);
+    free(numberString);
+}
+
+void closeGloableFonts(){
+    TTF_CloseFont(gFontFile20);
+    TTF_CloseFont(gFontFile60);
+    TTF_CloseFont(gFontFile80);
+    TTF_CloseFont(gFontFile120);
+    TTF_CloseFont(gFontFile30);
+    TTF_CloseFont(gFontFile50);
+    TTF_CloseFont(gFontFile25);
 }
